@@ -3,312 +3,283 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DieselDonor | Контрактные ТНВД из Японии</title>
+    <title>DieselDonor | Контрактные ТНВД</title>
     <style>
-        :root { 
-            --bg-main: #0f0f0f; 
-            --bg-card: #1a1a1a; 
-            --accent: #FFD700; 
-            --text-main: #ffffff; 
-            --text-sec: #a0a0a0; 
-            --border: #333333; 
+        :root {
+            --bg-main: #000000;
+            --bg-card: rgba(28, 28, 30, 0.6);
+            --accent: #FFD700;
+            --text-main: #f5f5f7;
+            --text-sec: #86868b;
+            --border: rgba(255, 255, 255, 0.1);
+            --blur: blur(20px);
         }
-        body { 
-            margin: 0; 
-            font-family: 'Inter', system-ui, sans-serif; 
-            background: var(--bg-main); 
-            color: var(--text-main); 
-            line-height: 1.6; 
-            overflow-x: hidden; 
-        }
-        
-        /* Header */
-        header { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            padding: 20px 40px; 
-            background: rgba(15, 15, 15, 0.95); 
-            backdrop-filter: blur(10px); 
-            position: sticky; 
-            top: 0; 
-            z-index: 100; 
-            border-bottom: 1px solid var(--border); 
-        }
-        .logo { font-size: 1.8rem; font-weight: 900; letter-spacing: -1px; color: #fff; text-decoration: none; }
-        .logo span { color: var(--accent); }
-        .top-info { display: flex; gap: 30px; align-items: center; font-size: 0.9rem; color: var(--text-sec); }
-        .cart-btn { 
-            background: var(--bg-card); 
-            border: 1px solid var(--border); 
-            padding: 10px 20px; 
-            border-radius: 50px; 
-            color: #fff; 
-            text-decoration: none; 
-            display: flex; 
-            align-items: center; 
-            gap: 8px; 
-            transition: all 0.3s; 
-        }
-        .cart-btn:hover { border-color: var(--accent); color: var(--accent); }
-        .cart-count { background: var(--accent); color: #000; font-size: 0.75rem; font-weight: bold; padding: 2px 8px; border-radius: 20px; }
 
-        /* Hero Section with Background Image */
-        .hero { 
+        * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+        
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: var(--bg-main);
+            color: var(--text-main);
+            line-height: 1.5;
+            overflow-x: hidden;
+        }
+
+        /* Navigation Bar (Glassmorphism) */
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: var(--blur);
+            -webkit-backdrop-filter: var(--blur);
+            border-bottom: 1px solid var(--border);
+            padding: 0 40px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-logo { font-size: 1.2rem; font-weight: 700; letter-spacing: -0.5px; text-decoration: none; color: #fff; }
+        .nav-logo span { color: var(--accent); }
+        
+        .nav-links { display: flex; gap: 30px; font-size: 0.8rem; color: #e8e8ed; }
+        .nav-links a { text-decoration: none; color: inherit; transition: color 0.3s; opacity: 0.8; }
+        .nav-links a:hover { opacity: 1; color: var(--accent); }
+
+        .nav-cart { 
+            background: rgba(255,255,255,0.1); 
+            padding: 6px 16px; 
+            border-radius: 20px; 
+            font-size: 0.8rem; 
+            text-decoration: none; 
+            color: #fff;
+            display: flex; align-items: center; gap: 6px;
+            transition: background 0.3s;
+        }
+        .nav-cart:hover { background: rgba(255,255,255,0.2); }
+
+        /* Hero Section */
+        .hero {
             position: relative;
-            padding: 140px 20px 100px; 
-            text-align: center; 
-            background: url('https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?q=80&w=2000&auto=format&fit=crop') no-repeat center center/cover;
-            animation: fadeIn 1s ease-out;
+            height: 90vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 20px;
+            background: url('https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?q=80&w=2574&auto=format&fit=crop') no-repeat center center/cover;
         }
         .hero::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(to bottom, rgba(15,15,15,0.8), rgba(15,15,15,0.98));
-            z-index: 1;
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.9));
         }
-        .hero > * { position: relative; z-index: 2; }
-
-        h1 { 
-            font-size: 4rem; 
-            margin: 0 0 20px; 
-            letter-spacing: -2px; 
-            text-shadow: 0 4px 20px rgba(0,0,0,0.5);
-        }
-        .subtitle { 
-            color: #ddd; 
-            font-size: 1.3rem; 
-            max-width: 800px; 
-            margin: 0 auto 50px; 
-            text-shadow: 0 2px 10px rgba(0,0,0,0.8);
-        }
+        .hero-content { position: relative; z-index: 2; max-width: 800px; animation: fadeUp 1s ease-out; }
         
-        .search-container { 
-            max-width: 800px; 
-            margin: 0 auto; 
-            position: relative; 
-            animation: slideUp 0.8s ease-out 0.2s backwards; 
+        h1 { font-size: clamp(3rem, 6vw, 5rem); font-weight: 700; letter-spacing: -2px; margin: 0 0 20px; line-height: 1.1; }
+        .hero-sub { font-size: 1.5rem; color: var(--text-sec); margin-bottom: 40px; font-weight: 400; }
+        
+        .search-wrapper {
+            width: 100%; max-width: 600px; margin: 0 auto;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 50px;
+            padding: 6px;
+            display: flex;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.3s;
         }
-        .search-input { 
-            width: 100%; 
-            padding: 24px 30px; 
-            border-radius: 50px; 
-            border: 2px solid rgba(255,255,255,0.1); 
-            background: rgba(26, 26, 26, 0.9); 
-            backdrop-filter: blur(5px);
-            color: #fff; 
-            font-size: 1.2rem; 
-            outline: none; 
-            transition: all 0.3s; 
-            box-sizing: border-box; 
+        .search-wrapper:focus-within { background: rgba(255,255,255,0.15); border-color: var(--accent); }
+        .search-input {
+            flex: 1; background: transparent; border: none; outline: none;
+            color: #fff; padding: 15px 25px; font-size: 1.1rem;
         }
-        .search-input:focus { border-color: var(--accent); background: rgba(26, 26, 26, 1); }
-        .search-btn { 
-            position: absolute; 
-            right: 8px; 
-            top: 8px; 
-            bottom: 8px; 
-            background: var(--accent); 
-            border: none; 
-            border-radius: 50px; 
-            padding: 0 40px; 
-            font-weight: bold; 
-            cursor: pointer; 
-            transition: transform 0.2s; 
+        .search-btn {
+            background: var(--accent); color: #000; border: none;
+            border-radius: 50px; padding: 0 35px; font-weight: 600; cursor: pointer;
+            transition: transform 0.2s;
         }
         .search-btn:hover { transform: scale(1.05); }
 
-        /* About Section (Rossko Style) */
-        .about-section { 
-            max-width: 1200px; 
-            margin: 80px auto; 
-            padding: 0 20px; 
-            display: grid; 
-            grid-template-columns: 1fr 1fr; 
-            gap: 60px; 
-            align-items: start;
-        }
-        .about-text h2 { font-size: 2.5rem; margin-bottom: 30px; color: var(--accent); }
-        .about-text p { font-size: 1.1rem; line-height: 1.8; color: #ccc; margin-bottom: 20px; }
-        .about-list { list-style: none; padding: 0; margin: 30px 0; }
-        .about-list li { 
-            padding: 15px 0; 
-            border-bottom: 1px solid var(--border); 
-            display: flex; 
-            align-items: center; 
-            gap: 15px; 
-            font-size: 1.1rem; 
-        }
-        .about-list li::before { 
-            content: '✓'; 
-            color: var(--accent); 
-            font-weight: bold; 
-            font-size: 1.5rem; 
-        }
-        .warning-box { 
-            background: rgba(255, 215, 0, 0.05); 
-            border-left: 4px solid var(--accent); 
-            padding: 25px; 
-            border-radius: 0 12px 12px 0; 
-            margin: 30px 0; 
-            font-size: 1rem; 
-            color: #aaa; 
-            line-height: 1.7;
-        }
-        .farpost-btn { 
-            display: inline-flex; 
-            align-items: center; 
-            gap: 10px; 
-            background: var(--accent); 
-            color: #000; 
-            padding: 16px 32px; 
-            border-radius: 50px; 
-            text-decoration: none; 
-            font-weight: 800; 
-            font-size: 1.1rem; 
-            transition: transform 0.2s; 
-            margin-top: 20px;
-        }
-        .farpost-btn:hover { transform: translateY(-3px); }
-
-        /* Map Section */
-        .map-container { 
-            width: 100%; 
-            height: 500px; 
-            border-radius: 20px; 
-            overflow: hidden; 
-            border: 1px solid var(--border);
-        }
-        .map-container iframe { width: 100%; height: 100%; border: none; }
-
-        /* Categories & Products */
-        .categories-section { padding: 60px 20px; max-width: 1200px; margin: 0 auto; }
-        .cat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 30px; }
-        .cat-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 25px; text-align: center; text-decoration: none; color: #fff; transition: all 0.3s; }
-        .cat-card:hover { transform: translateY(-5px); border-color: var(--accent); }
-        .cat-icon { font-size: 2rem; margin-bottom: 10px; display: block; }
+        /* Bento Grid Layout (Apple Style) */
+        .bento-section { padding: 100px 40px; max-width: 1200px; margin: 0 auto; }
+        .section-head { font-size: 3rem; font-weight: 700; margin-bottom: 60px; text-align: center; letter-spacing: -1px; }
         
-        .popular-section { max-width: 1200px; margin: 60px auto; padding: 0 20px; }
-        .section-title { font-size: 2rem; margin-bottom: 30px; border-left: 5px solid var(--accent); padding-left: 20px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
-        .card { background: var(--bg-card); border-radius: 20px; overflow: hidden; border: 1px solid var(--border); transition: all 0.4s; display: flex; flex-direction: column; }
-        .card:hover { border-color: var(--accent); transform: translateY(-8px); }
-        .card-img-wrap { height: 220px; background: #252525; overflow: hidden; }
-        .card img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s; }
-        .card:hover img { transform: scale(1.1); }
-        .info { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; }
-        .price { color: var(--accent); font-size: 1.4rem; font-weight: 800; margin-top: auto; padding-top: 15px; }
-        .title { font-size: 1.05rem; margin: 0; line-height: 1.4; font-weight: 600; }
-        .meta { color: #666; font-size: 0.85rem; margin-top: 8px; }
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+        
+        .bento-card {
+            background: var(--bg-card);
+            border-radius: 30px;
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+            border: 1px solid var(--border);
+            display: flex; flex-direction: column; justify-content: space-between;
+            min-height: 350px;
+        }
+        .bento-card:hover { transform: scale(1.02); }
+        .bento-card.large { grid-column: span 2; background: linear-gradient(135deg, #1c1c1e 0%, #2c2c2e 100%); }
+        .bento-card.tall { grid-row: span 2; }
+        
+        .card-label { font-size: 0.9rem; color: var(--text-sec); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+        .card-title { font-size: 2rem; font-weight: 700; margin: 0 0 15px; letter-spacing: -0.5px; }
+        .card-desc { color: var(--text-sec); font-size: 1.1rem; line-height: 1.6; margin: 0; }
+        .card-link { margin-top: 20px; color: var(--accent); text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 5px; }
+        
+        /* Products Carousel */
+        .products-scroll {
+            display: flex; gap: 20px; overflow-x: auto; padding: 20px 40px 60px;
+            scrollbar-width: none; -ms-overflow-style: none;
+        }
+        .products-scroll::-webkit-scrollbar { display: none; }
+        
+        .product-card {
+            min-width: 300px; background: var(--bg-card); border-radius: 24px;
+            overflow: hidden; border: 1px solid var(--border); flex-shrink: 0;
+            transition: transform 0.3s;
+        }
+        .product-card:hover { transform: translateY(-10px); }
+        .p-img { height: 250px; background: #111; overflow: hidden; }
+        .p-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
+        .product-card:hover .p-img img { transform: scale(1.1); }
+        .p-info { padding: 25px; }
+        .p-name { font-size: 1.2rem; font-weight: 600; margin: 0 0 10px; }
+        .p-meta { color: var(--text-sec); font-size: 0.9rem; margin-bottom: 15px; }
+        .p-price { color: var(--accent); font-size: 1.3rem; font-weight: 700; }
 
-        footer { text-align: center; padding: 40px; color: #444; border-top: 1px solid var(--border); margin-top: 60px; }
+        /* Map & Footer */
+        .map-wrap { border-radius: 30px; overflow: hidden; height: 500px; margin: 40px; border: 1px solid var(--border); }
+        footer { text-align: center; padding: 60px 20px; color: var(--text-sec); font-size: 0.9rem; border-top: 1px solid var(--border); }
 
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-        @media (max-width: 768px) { 
-            h1 { font-size: 2.5rem; } 
-            header { flex-direction: column; gap: 15px; padding: 15px; } 
-            .top-info { flex-wrap: wrap; justify-content: center; } 
-            .about-section { grid-template-columns: 1fr; }
-            .map-container { height: 300px; }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        
+        @media (max-width: 900px) {
+            .bento-grid { grid-template-columns: 1fr; }
+            .bento-card.large, .bento-card.tall { grid-column: span 1; grid-row: span 1; }
+            h1 { font-size: 3rem; }
+            nav { padding: 0 20px; }
+            .nav-links { display: none; }
         }
     </style>
 </head>
 <body>
-    <header>
-        <a href="/" class="logo">Diesel<span>Donor</span></a>
-        <div class="top-info">
-            <div>📍 г. Владивосток, ул. Матросова, д. 30</div>
-            <div>🕒 Пн-Пт: 10:00 - 18:00</div>
-            <div>📞 +7 (951) 011-58-78</div>
-        </div>
-        <a href="/cart" class="cart-btn">🛒 Корзина <span class="cart-count">{{ session.get('cart', [])|length }}</span></a>
-    </header>
 
-    <!-- HERO SECTION -->
+    <!-- Navigation -->
+    <nav>
+        <a href="/" class="nav-logo">Diesel<span>Donor</span></a>
+        <div class="nav-links">
+            <a href="/catalog">Каталог</a>
+            <a href="#about">О нас</a>
+            <a href="https://www.farpost.ru/user/DieseLDonor/" target="_blank">Farpost</a>
+            <a href="#contacts">Контакты</a>
+        </div>
+        <a href="/cart" class="nav-cart">🛒 Корзина <span style="background:var(--accent); color:#000; border-radius:10px; padding:2px 6px; font-size:0.7rem;">{{ session.get('cart', [])|length }}</span></a>
+    </nav>
+
+    <!-- Hero -->
     <div class="hero">
-        <h1>Оригинальные ТНВД из Японии</h1>
-        <p class="subtitle">Без восстановления, без стенда, по честной цене. Прямые поставки без посредников.</p>
-        <form action="/catalog" method="GET" class="search-container">
-            <input type="text" name="q" class="search-input" placeholder="Поиск по названию, номеру детали или двигателю..." value="{{ search_query or '' }}">
-            <button type="submit" class="search-btn">Найти запчасть</button>
-        </form>
-    </div>
-
-    <!-- ABOUT SECTION (ROSSKO STYLE) -->
-    <div class="about-section">
-        <div class="about-text">
-            <h2>Почему DieselDonor?</h2>
-            <p><strong>Diesel Donor</strong> — это оригинальные контрактные ТНВД и комплектующие из Японии без восстановления и без стенда — по честной цене.</p>
+        <div class="hero-content">
+            <h1>ТНВД. Без компромиссов.</h1>
+            <p class="hero-sub">Оригинальные контрактные запчасти из Японии. Честная цена без наценок за стенд.</p>
             
-            <ul class="about-list">
-                <li>Прямые поставки из Японии без посредников</li>
-                <li>Все позиции оригинальные, не восстановленные, не перебранные</li>
-                <li>Отправка по России любой ТК (СДЭК, ПЭК, Деловые Линии)</li>
-                <li>Честная цена без наценок за "проверку на стенде"</li>
-            </ul>
-
-            <div class="warning-box">
-                ⚠️ <strong>Важно:</strong> Приобретая у нас ТНВД, знайте, что агрегат уже эксплуатировался в Японии. Мы не даем 100% гарантию на безупречную работу, так как насосы продаются без проверки на тест-плане. Именно поэтому мы можем дать самую низкую цену на рынке. Также продаём отдельные детали с нужных вам насосов!
-            </div>
-
-            <a href="https://www.farpost.ru/user/DieseLDonor/" target="_blank" class="farpost-btn">
-                📋 Смотреть все предложения на Farpost →
-            </a>
-        </div>
-
-        <!-- INTERACTIVE MAP -->
-        <div class="map-container">
-            <iframe src="https://yandex.ru/map-widget/v1/?um=constructor%3A0&amp;source=constructorLink&amp;text=Владивосток%2C%20улица%20Матросова%2C%2030&amp;z=17" allowfullscreen="true"></iframe>
+            <form action="/catalog" method="GET" class="search-wrapper">
+                <input type="text" name="q" class="search-input" placeholder="Поиск по номеру, модели или двигателю..." value="{{ search_query or '' }}">
+                <button type="submit" class="search-btn">Найти</button>
+            </form>
         </div>
     </div>
 
-    <!-- CATEGORIES -->
-    <div class="categories-section">
-        <h2 style="text-align:center; margin-bottom:10px;">Категории запчастей</h2>
-        <div class="cat-grid">
-            <a href="/catalog?cat=ТНВД" class="cat-card"><span class="cat-icon">⛽</span><div class="cat-name">ТНВД</div></a>
-            <a href="/catalog?cat=Форсунки" class="cat-card"><span class="cat-icon">💉</span><div class="cat-name">Форсунки</div></a>
-            <a href="/catalog?cat=Турбина" class="cat-card"><span class="cat-icon">🌪️</span><div class="cat-name">Турбины</div></a>
-            <a href="/catalog?cat=АКПП" class="cat-card"><span class="cat-icon">⚙️</span><div class="cat-name">АКПП / МКПП</div></a>
-            <a href="/catalog?cat=Запчасти и фильтра" class="cat-card"><span class="cat-icon">🔩</span><div class="cat-name">Запчасти и фильтра</div></a>
-            <a href="/catalog?cat=Мелочь" class="cat-card"><span class="cat-icon">🔌</span><div class="cat-name">Мелочь</div></a>
-        </div>
-    </div>
-
-    <!-- POPULAR PRODUCTS -->
-    <div class="popular-section">
-        <h2 class="section-title">Последние поступления</h2>
-        <div class="grid">
-            {% for p in popular_products %}
-            <a href="/product/{{ p.id }}" style="text-decoration:none; color:inherit;">
-                <div class="card">
-                    <div class="card-img-wrap">
-                        {% if p.images %}
-                            {% set first_img = p.images.split(',')[0].strip() %}
-                            <img src="{{ first_img }}" loading="lazy" alt="{{ p.name }}">
-                        {% else %}
-                            <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:#444;">Нет фото</div>
-                        {% endif %}
-                    </div>
-                    <div class="info">
-                        <h3 class="title">{{ p.name }}</h3>
-                        <div class="meta">{{ p.brand }} {{ p.model }} | {{ p.engine }}</div>
-                        <div class="price">{% if p.price and p.price > 0 %}{{ "{:,}".format(p.price).replace(',', ' ') }} ₽{% else %}По запросу{% endif %}</div>
-                    </div>
+    <!-- Bento Grid Info -->
+    <div class="bento-section" id="about">
+        <h2 class="section-head">Почему DieselDonor?</h2>
+        <div class="bento-grid">
+            <div class="bento-card large">
+                <div>
+                    <div class="card-label">Честный подход</div>
+                    <h3 class="card-title">Без восстановления.<br>Без стенда.</h3>
+                    <p class="card-desc">Мы не вкладываемся в дорогую диагностику и работу мастеров, поэтому даем самую низкую цену на рынке. Агрегаты продаются «как есть», прямо из Японии.</p>
                 </div>
-            </a>
-            {% endfor %}
-            
-            {% if not popular_products %}
-            <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #555;">
-                Пока нет товаров. Скоро добавим!
+                <a href="https://www.farpost.ru/user/DieseLDonor/" target="_blank" class="card-link">Смотреть на Farpost →</a>
             </div>
-            {% endif %}
+            
+            <div class="bento-card">
+                <div class="card-label">Логистика</div>
+                <h3 class="card-title">Отправка по всей РФ</h3>
+                <p class="card-desc">Работаем с СДЭК, ПЭК, Деловыми Линиями. Быстрая доставка в любой регион.</p>
+            </div>
+
+            <div class="bento-card tall">
+                <div class="card-label">Ассортимент</div>
+                <h3 class="card-title">В наличии</h3>
+                <ul style="list-style:none; padding:0; margin:20px 0; color:var(--text-sec); line-height:2;">
+                    <li style="border-bottom:1px solid var(--border); padding:10px 0;">⛽ ТНВД (насосы)</li>
+                    <li style="border-bottom:1px solid var(--border); padding:10px 0;">💉 Форсунки</li>
+                    <li style="border-bottom:1px solid var(--border); padding:10px 0;">🔩 Клапана и детали</li>
+                    <li style="padding:10px 0;">🌪️ Турбины</li>
+                </ul>
+            </div>
+
+            <div class="bento-card">
+                <div class="card-label">Гарантия</div>
+                <h3 class="card-title">Прозрачные условия</h3>
+                <p class="card-desc">Насосы б/у, без тест-плана. Мы предупреждаем об этом сразу. Никаких скрытых условий.</p>
+            </div>
         </div>
     </div>
 
-    <footer>© 2026 DieselDonor. Все права защищены.</footer>
+    <!-- Products Scroll -->
+    <div style="padding: 0 40px;">
+        <h2 class="section-head" style="text-align:left; margin-bottom:30px;">Новые поступления</h2>
+    </div>
+    <div class="products-scroll">
+        {% for p in popular_products %}
+        <a href="/product/{{ p.id }}" style="text-decoration:none; color:inherit;">
+            <div class="product-card">
+                <div class="p-img">
+                    {% if p.images %}
+                        {% set first_img = p.images.split(',')[0].strip() %}
+                        <img src="{{ first_img }}" loading="lazy" alt="{{ p.name }}">
+                    {% else %}
+                        <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:#333;">No Photo</div>
+                    {% endif %}
+                </div>
+                <div class="p-info">
+                    <div class="p-name">{{ p.name }}</div>
+                    <div class="p-meta">{{ p.brand }} {{ p.model }}</div>
+                    <div class="p-price">{% if p.price and p.price > 0 %}{{ "{:,}".format(p.price).replace(',', ' ') }} ₽{% else %}По запросу{% endif %}</div>
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+
+    <!-- Map -->
+    <div class="bento-section" id="contacts" style="padding-top:0;">
+        <h2 class="section-head">Как нас найти</h2>
+        <div style="display:grid; grid-template-columns: 1fr 2fr; gap:24px;">
+            <div class="bento-card" style="min-height:auto;">
+                <div class="card-label">Адрес</div>
+                <h3 class="card-title">Владивосток,<br>ул. Матросова, 30</h3>
+                <p class="card-desc">Пн-Пт: 10:00 - 18:00<br>+7 (951) 011-58-78</p>
+            </div>
+            <div class="map-wrap">
+                <iframe src="https://yandex.ru/map-widget/v1/?um=constructor%3A0&amp;source=constructorLink&amp;text=Владивосток%2C%20улица%20Матросова%2C%2030&amp;z=17" allowfullscreen="true"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        Copyright © 2026 DieselDonor Inc. Все права защищены.<br>
+        Политика конфиденциальности | Условия использования
+    </footer>
+
 </body>
 </html>
