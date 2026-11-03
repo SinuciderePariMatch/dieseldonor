@@ -1,5 +1,12 @@
 import os
 import json
+
+@app.template_filter('from_json')
+def from_json(value):
+    try: 
+        return json.loads(value)
+    except: 
+        return []
 from functools import wraps
 import psycopg
 from psycopg.rows import dict_row

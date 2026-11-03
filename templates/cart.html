@@ -106,6 +106,7 @@
             </div>
 
             <form id="orderForm" onsubmit="submitOrder(event)">
+                
                 <!-- Поля для ТК -->
                 <div id="tk-fields">
                     <div class="form-group">
@@ -128,17 +129,10 @@
                         </select>
                     </div>
                 </div>
-<!-- Вставь это ПОСЛЕ закрывающего </div> блока tk-fields -->
-<div id="delivery-cost" style="margin-bottom:20px; padding:12px; background:rgba(255,215,0,0.05); border-radius:10px; font-size:0.9rem; display:none;"></div>
 
-<script>
-    // Показываем блок только при выборе ТК
-    const origSetDelivery = setDelivery;
-    setDelivery = function(type) {
-        origSetDelivery(type);
-        document.getElementById('delivery-cost').style.display = type === 'tk' ? 'block' : 'none';
-    }
-</script>
+                <!-- Блок стоимости доставки -->
+                <div id="delivery-cost" style="margin-bottom:20px; padding:12px; background:rgba(255,215,0,0.05); border-radius:10px; font-size:0.9rem; display:none;"></div>
+
                 <!-- Общие данные клиента -->
                 <div class="form-group">
                     <label>Ваше имя *</label>
@@ -172,7 +166,7 @@
 
                 <div class="total-row">
                     <span>Итого:</span>
-                    <span>{{ "{:,}".format(total_price).replace(',', ' ') }} ₽</span>
+                    <span id="final-total">{{ "{:,}".format(total_price).replace(',', ' ') }} ₽</span>
                 </div>
 
                 <button type="submit" class="btn-submit" id="submitBtn">Оформить заказ</button>
@@ -184,135 +178,173 @@
         {% endif %}
     </div>
 
-   <script>
-    let deliveryType = 'tk';
-    let currentDeliveryPrice = 0;
+    <script>
+        let deliveryType = 'tk';
+        let currentDeliveryPrice = 0;
 
-    function setDelivery(type) {
-        deliveryType = type;
-        document.querySelectorAll('.toggle-opt').forEach(el => el.classList.remove('active'));
-        event.target.classList.add('active');
-        
-        const tkFields = document.getElementById('tk-fields');
-        const cityInput = tkFields.querySelector('input[name="city_to"]');
-        const tkSelect = tkFields.querySelector('select[name="tk_name"]');
-        
-        if (type === 'tk') {
-            tkFields.classList.remove('hidden');
-            cityInput.required = true;
-            tkSelect.required = true;
-            recalcDelivery(); // Пересчитываем при переключении
-        } else {
-            tkFields.classList.add('hidden');
-            cityInput.required = false;
-            tkSelect.required = false;
-            currentDeliveryPrice = 0;
-            updateTotal();
-        }
-    }
-
-    function setPayment(el, method) {
-        document.querySelectorAll('.pay-opt').forEach(e => e.classList.remove('active'));
-        el.classList.add('active');
-        document.getElementById('paymentInput').value = method;
-    }
-
-    // Автоматический пересчет доставки
-    async function recalcDelivery() {
-        if (deliveryType !== 'tk') return;
-        
-        const city = document.querySelector('input[name="city_to"]').value.trim();
-        const tk = document.querySelector('select[name="tk_name"]').value;
-        
-        if (!city || !tk) {
-            document.getElementById('delivery-cost').innerHTML = '';
-            currentDeliveryPrice = 0;
-            updateTotal();
-            return;
-        }
-
-        // Показываем загрузку
-        document.getElementById('delivery-cost').innerHTML = '<span style="color:#86868b;">⏳ Считаем...</span>';
-        
-        try {
-            const res = await fetch('/api/calculate-delivery', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({
-                    city: city,
-                    tk_name: tk,
-                    weight: {{ total_price / 1000 | round(1) }} // Примерный вес: 1кг на 1000₽ стоимости
-                })
-            });
-            const data = await res.json();
+        function setDelivery(type) {
+            deliveryType = type;
+            document.querySelectorAll('.toggle-opt').forEach(el => el.classList.remove('active'));
+            event.target.classList.add('active');
             
-            currentDeliveryPrice = data.price;
-            document.getElementById('delivery-cost').innerHTML = 
-                `🚚 Доставка ${data.tk_name}: <b>${data.price} ₽</b> (${data.days} дн.)`;
+            const tkFields = document.getElementById('tk-fields');
+            const cityInput = tkFields.querySelector('input[name="city_to"]');
+            const tkSelect = tkFields.querySelector('select[name="tk_name"]');
             
-            updateTotal();
-        } catch (e) {
-            document.getElementById('delivery-cost').innerHTML = 
-                '<span style="color:#ff4444;">❌ Ошибка расчета</span>';
+            // Управление видимостью блока стоимости доставки
+            const costBlock = document.getElementById('delivery-cost');
+            
+            if (type === 'tk') {
+                tkFields.classList.remove('hidden');
+                costBlock.style.display = 'block';
+                cityInput.required = true;
+                tkSelect.required = true;
+                recalcDelivery();
+            } else {
+                tkFields.classList.add('hidden');
+                costBlock.style.display = 'none';
+                cityInput.required = false;
+                tkSelect.required = false;
+                currentDeliveryPrice = 0;
+                updateTotal();
+            }
         }
-    }
 
-    // Обновление итоговой суммы
-    function updateTotal() {
-        const basePrice = {{ total_price }};
-        const total = basePrice + currentDeliveryPrice;
-        document.getElementById('final-total').textContent = 
-            total.toLocaleString('ru-RU').replace(',', ' ') + ' ₽';
-    }
+        function setPayment(el, method) {
+            document.querySelectorAll('.pay-opt').forEach(e => e.classList.remove('active'));
+            el.classList.add('active');
+            document.getElementById('paymentInput').value = method;
+        }
 
-    // Слушатели событий для автопересчета
-    document.addEventListener('DOMContentLoaded', () => {
-        const cityInput = document.querySelector('input[name="city_to"]');
-        const tkSelect = document.querySelector('select[name="tk_name"]');
-        
-        if (cityInput) cityInput.addEventListener('input', debounce(recalcDelivery, 500));
-        if (tkSelect) tkSelect.addEventListener('change', recalcDelivery);
-    });
+        // Автоматический пересчет доставки
+        async function recalcDelivery() {
+            if (deliveryType !== 'tk') return;
+            
+            const city = document.querySelector('input[name="city_to"]').value.trim();
+            const tk = document.querySelector('select[name="tk_name"]').value;
+            
+            if (!city || !tk) {
+                document.getElementById('delivery-cost').innerHTML = '';
+                currentDeliveryPrice = 0;
+                updateTotal();
+                return;
+            }
 
-    // Debounce чтобы не спамить запросами
-    function debounce(func, wait) {
-        let timeout;
-        return function executedFunction(...args) {
-            const later = () => {
+            document.getElementById('delivery-cost').innerHTML = '<span style="color:#86868b;">⏳ Считаем...</span>';
+            
+            try {
+                const res = await fetch('/api/calculate-delivery', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        city_from: 'Владивосток',
+                        city_to: city,
+                        tk_name: tk,
+                        weight: Math.max(1, {{ total_price / 1000 | round(1) }})
+                    })
+                });
+                const data = await res.json();
+                
+                currentDeliveryPrice = data.price || 0;
+                document.getElementById('delivery-cost').innerHTML = 
+                    `🚚 Доставка ${data.tk_name}: <b>${currentDeliveryPrice} ₽</b> (${data.days} дн.)`;
+                
+                updateTotal();
+            } catch (e) {
+                document.getElementById('delivery-cost').innerHTML = 
+                    '<span style="color:#ff4444;">❌ Ошибка расчета</span>';
+            }
+        }
+
+        // Обновление итоговой суммы
+        function updateTotal() {
+            const basePrice = {{ total_price }};
+            const total = basePrice + currentDeliveryPrice;
+            document.getElementById('final-total').textContent = 
+                total.toLocaleString('ru-RU').replace(',', ' ') + ' ₽';
+        }
+
+        // Слушатели событий для автопересчета
+        document.addEventListener('DOMContentLoaded', () => {
+            const cityInput = document.querySelector('input[name="city_to"]');
+            const tkSelect = document.querySelector('select[name="tk_name"]');
+            
+            if (cityInput) cityInput.addEventListener('input', debounce(recalcDelivery, 500));
+            if (tkSelect) tkSelect.addEventListener('change', recalcDelivery);
+        });
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
                 clearTimeout(timeout);
-                func(...args);
+                timeout = setTimeout(later, wait);
             };
-            clearTimeout(timeout);
-            timeout = setTimeout(later, wait);
-        };
-    }
-
-    async function submitOrder(e) {
-        e.preventDefault();
-        const btn = document.getElementById('submitBtn');
-        btn.disabled = true;
-        btn.textContent = 'Отправка...';
-
-        const formData = new FormData(e.target);
-        formData.append('delivery_type', deliveryType);
-        formData.append('delivery_price', currentDeliveryPrice);
-        formData.append('total_price', {{ total_price }} + currentDeliveryPrice);
-        
-        {% for p in products %}
-        formData.append('items', '{{ p.name }} (x{{ p.qty }}) - {{ "{:,}".format((p.price or 0) * p.qty).replace(',', ' ') }}₽');
-        {% endfor %}
-
-        try {
-            await new Promise(r => setTimeout(r, 1500));
-            alert(`✅ Заказ успешно оформлен!\n\nИтого: ${formData.get('total_price')} ₽\n${deliveryType === 'tk' ? 'Доставка: ' + formData.get('tk_name') : 'Самовывоз'}\n\nМенеджер свяжется с вами!`);
-            window.location.href = '/';
-        } catch (err) {
-            alert('❌ Ошибка. Напишите нам в WhatsApp.');
-            btn.disabled = false;
-            btn.textContent = 'Оформить заказ';
         }
-    }
-</script>
+
+        // ИСПРАВЛЕННАЯ ФУНКЦИЯ ОФОРМЛЕНИЯ ЗАКАЗА
+        async function submitOrder(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.textContent = 'Отправка...';
+
+            const formData = new FormData(e.target);
+            
+            // Формируем правильный JSON объект для сервера
+            const orderData = {
+                client_name: formData.get('client_name'),
+                client_phone: formData.get('client_phone'),
+                delivery_type: deliveryType,
+                city_from: 'г. Владивосток, ул. Матросова, 30',
+                city_to: formData.get('city_to') || '',
+                tk_name: formData.get('tk_name') || '',
+                payment_method: formData.get('payment_method'),
+                comment: formData.get('comment'),
+                total_price: {{ total_price }} + currentDeliveryPrice,
+                items: []
+            };
+
+            // Собираем товары из Jinja-цикла
+            {% for p in products %}
+            orderData.items.push({
+                name: '{{ p.name | replace("'", "\\'") }}',
+                qty: {{ p.qty }},
+                price: {{ p.price or 0 }},
+                total: {{ (p.price or 0) * p.qty }}
+            });
+            {% endfor %}
+
+            console.log("Отправляем заказ:", orderData);
+
+            try {
+                const res = await fetch('/api/orders/create', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(orderData)
+                });
+                
+                const result = await res.json();
+                
+                if (result.status === 'ok') {
+                    alert(`✅ Заказ успешно оформлен!\n\nИтого: ${orderData.total_price} ₽\nМенеджер свяжется с вами.`);
+                    
+                    // Очищаем корзину на сервере
+                    await fetch('/cart/clear', {method: 'POST'});
+                    window.location.href = '/';
+                } else {
+                    throw new Error(result.error || 'Ошибка сервера');
+                }
+            } catch (err) {
+                console.error("Ошибка заказа:", err);
+                alert('❌ Ошибка при оформлении: ' + err.message + '\n\nПожалуйста, напишите нам в WhatsApp.');
+                btn.disabled = false;
+                btn.textContent = 'Оформить заказ';
+            }
+        }
     </script>
 </body>
 </html>
