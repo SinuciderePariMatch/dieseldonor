@@ -1,0 +1,145 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DieselDonor — Контрактные запчасти</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#101214;color:#f2f2f2;font-family:Arial,sans-serif}
+a{color:inherit;text-decoration:none}
+header{background:#191d20;border-bottom:1px solid #393d40;padding:20px 6%;display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
+.logo{font-size:27px;font-weight:900;letter-spacing:1px}
+.logo span{color:#ffd34f}
+nav{display:flex;gap:22px;flex-wrap:wrap;color:#ccc}
+.hero{padding:85px 7%;background:linear-gradient(110deg,#171b1e,#252a2d)}
+.hero small{color:#ffd34f;letter-spacing:3px;font-weight:bold}
+.hero h1{font-size:clamp(35px,6vw,65px);max-width:850px;margin:18px 0}
+.hero p{color:#bbb;font-size:18px;max-width:650px;line-height:1.6}
+.btn{display:inline-block;margin-top:18px;padding:15px 24px;background:#ffd34f;color:#151515;border-radius:5px;font-weight:bold}
+section{padding:55px 7%}
+h2{font-size:30px;margin-top:0}
+.sub{color:#aaa;line-height:1.6}
+.categories{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:15px;margin-top:25px}
+.category{background:#1b2023;border:1px solid #393e41;padding:25px;border-radius:9px}
+.category b{color:#ffd34f;font-size:18px}
+.products{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px;margin-top:25px}
+.product{background:#1b2023;border:1px solid #393e41;border-radius:9px;overflow:hidden}
+.product img{width:100%;height:180px;object-fit:cover;background:#282d30}
+.product-info{padding:17px}
+.product h3{margin:0 0 10px}
+.product p{color:#aaa;line-height:1.5}
+.product button{background:#ffd34f;border:0;padding:11px 15px;border-radius:5px;font-weight:bold;cursor:pointer}
+.notice{background:#211f18;border:1px solid #806b2c;border-radius:9px;padding:23px;line-height:1.7;color:#ddd}
+.contact{background:#1b2023;border-top:1px solid #393e41}
+footer{padding:25px 7%;color:#888;background:#0b0d0e}
+@media(max-width:600px){header{padding:17px 5%}.hero{padding:55px 6%}section{padding:40px 6%}}
+</style>
+</head>
+<body>
+
+<header>
+  <a class="logo" href="/">Diesel<span>Donor</span></a>
+  <nav>
+    <a href="#catalog">Каталог</a>
+    <a href="#about">О компании</a>
+    <a href="#important">Условия покупки</a>
+    <a href="#contacts">Контакты</a>
+  </nav>
+</header>
+
+<div class="hero">
+  <small>КОНТРАКТНЫЕ ДИЗЕЛЬНЫЕ КОМПЛЕКТУЮЩИЕ</small>
+  <h1>Надёжные запчасти для вашего дизеля</h1>
+  <p>Контрактные комплектующие, привезённые из Японии. Подбор деталей и отправка заказов по всей России.</p>
+  <a class="btn" href="#catalog">Перейти в каталог</a>
+</div>
+
+<section id="catalog">
+  <h2>Каталог запчастей</h2>
+  <p class="sub">Актуальные позиции DieselDonor. Стоимость и наличие уточняйте у менеджера.</p>
+
+  <div class="categories">
+    <div class="category"><b>ТНВД</b><p class="sub">Топливные насосы высокого давления</p></div>
+    <div class="category"><b>Форсунки</b><p class="sub">Дизельные форсунки и комплектующие</p></div>
+    <div class="category"><b>Клапана</b><p class="sub">Клапана и отдельные детали насосов</p></div>
+    <div class="category"><b>Другие детали</b><p class="sub">Генераторы, стартеры, турбокомпрессоры и другое</p></div>
+  </div>
+
+  <h2 style="margin-top:45px">Товары в наличии</h2>
+  <div class="products" id="products">
+    <p class="sub">Загружаем каталог...</p>
+  </div>
+</section>
+
+<section id="about">
+  <h2>О компании DieselDonor</h2>
+  <p class="sub">Мы занимаемся продажей контрактных запчастей, снятых с автомобилей-доноров в Японии. В ассортименте ТНВД, форсунки, клапана и отдельные комплектующие. Детали продаются в том состоянии, в котором поступают к нам, без восстановления и переборки. Отправляем заказы транспортными компаниями по России.</p>
+</section>
+
+<section id="important">
+  <h2>Важно прочитать перед покупкой</h2>
+  <div class="notice">
+    <p><b>Состояние деталей.</b> ТНВД и другие комплектующие бывшие в употреблении, ранее эксплуатировались в Японии. Стендовая проверка не проводится, тест-планы и результаты стенда не предоставляются.</p>
+    <p><b>Проверка перед покупкой.</b> По предварительному согласованию можем предоставить ТНВД или отдельную запчасть для проверки. Такая проверка позволяет самостоятельно оценить деталь, но не является гарантией её работоспособности после установки или эксплуатации.</p>
+    <p><b>Условия продажи.</b> Просим внимательно проверить применимость детали до оплаты. Продажа осуществляется как окончательная; возврат по причине того, что покупатель передумал или ожидал другого результата, не предусмотрен. Обязательные права покупателя, предусмотренные законодательством РФ, сохраняются.</p>
+    <p><b>Гарантии.</b> Мы не можем гарантировать 100% безотказную работу бывших в употреблении деталей. Условия продажи не ограничивают права покупателя, установленные законом.</p>
+  </div>
+</section>
+
+<section id="contacts" class="contact">
+  <h2>Связаться с нами</h2>
+  <p class="sub">Уточнить наличие, стоимость и совместимость запчастей можно у менеджера.</p>
+  <p><b>Телефон:</b> <a href="tel:+79510115878">+7 951 011-58-78</a></p>
+  <p><b>WhatsApp:</b> <a href="https://wa.me/79510115878">Написать менеджеру</a></p>
+  <p><b>Telegram:</b> Ссылка будет добавлена</p>
+  <p><b>FarPost:</b> <a href="https://www.farpost.ru/user/DieseLDonor/" target="_blank">Наш каталог на FarPost</a></p>
+</section>
+
+<footer>© DieselDonor — контрактные запчасти из Японии</footer>
+
+<script>
+async function loadProducts(){
+  const container=document.getElementById("products");
+  try{
+    const response=await fetch("/api/products");
+    if(!response.ok) throw new Error("Ошибка загрузки");
+    const products=await response.json();
+
+    if(!products.length){
+      container.innerHTML='<p class="sub">Каталог пока наполняется. Уточните наличие у менеджера.</p>';
+      return;
+    }
+
+    container.innerHTML=products.map(p=>`
+      <article class="product">
+        ${p.photo_url ? `<img src="${p.photo_url}" alt="">` : '<div style="height:180px;display:grid;place-items:center;color:#777">DieselDonor</div>'}
+        <div class="product-info">
+          <h3>${escapeHTML(p.name)}</h3>
+          <p>${escapeHTML(p.category || "")}</p>
+          <p>${escapeHTML(p.description || "")}</p>
+          <p>Артикул: ${escapeHTML(p.article || "уточняйте")}</p>
+          <p>${escapeHTML(p.availability || "Уточнить наличие")}</p>
+          <button onclick="contactManager('${encodeURIComponent(p.name)}')">Уточнить цену</button>
+        </div>
+      </article>
+    `).join("");
+  }catch(error){
+    container.innerHTML='<p class="sub">Не удалось загрузить каталог. Попробуйте обновить страницу.</p>';
+  }
+}
+function escapeHTML(value){
+  return String(value).replace(/[&<>"']/g, c=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  })[c]);
+}
+function contactManager(product){
+  const message="Здравствуйте! Интересует запчасть: "+decodeURIComponent(product);
+  window.open("https://wa.me/79510115878?text="+encodeURIComponent(message),"_blank");
+}
+loadProducts();
+</script>
+
+</body>
+</html>

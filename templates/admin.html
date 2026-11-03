@@ -1,0 +1,100 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DieselDonor — Управление каталогом</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#101214;color:#eee;font:15px Arial}
+main{max-width:1100px;margin:35px auto;padding:0 18px}
+h1{color:#ffd34f}
+a{color:#ffd34f}
+.panel,.item{background:#1b1f22;border:1px solid #414548;border-radius:12px;padding:18px;margin:16px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
+input,textarea,select{width:100%;padding:12px;margin:7px 0 12px;background:#0e1012;color:white;border:1px solid #555;border-radius:7px}
+button{padding:12px 18px;background:#ffd34f;color:#171717;border:0;border-radius:7px;font-weight:bold;cursor:pointer}
+.item{display:flex;justify-content:space-between;gap:12px}
+.muted{color:#aaa}
+</style>
+</head>
+<body>
+<main>
+
+<h1>DieselDonor / Админ-панель</h1>
+<p><a href="/">Открыть сайт</a> · <a href="/admin/logout">Выйти</a></p>
+
+{% for message in get_flashed_messages() %}
+<p>{{ message }}</p>
+{% endfor %}
+
+<form class="panel" method="post" action="/admin/add">
+<h2>Добавить товар</h2>
+
+<div class="grid">
+
+<label>Название *
+<input name="name" required placeholder="ТНВД Toyota 14BT">
+</label>
+
+<label>Категория
+<select name="category">
+<option>ТНВД</option>
+<option>Форсунки</option>
+<option>Клапана</option>
+<option>Генераторы и стартеры</option>
+<option>Турбокомпрессоры</option>
+<option>Другие комплектующие</option>
+</select>
+</label>
+
+<label>Артикул
+<input name="article" placeholder="Номер детали">
+</label>
+
+<label>Ссылка на фотографию
+<input name="photo_url" type="url" placeholder="https://...">
+</label>
+
+<label>Наличие
+<select name="availability">
+<option>В наличии</option>
+<option>Уточнить наличие</option>
+</select>
+</label>
+
+</div>
+
+<label>Описание
+<textarea name="description" rows="3" placeholder="Состояние, комплектация, применимость"></textarea>
+</label>
+
+<button type="submit">Добавить товар</button>
+</form>
+
+<h2>Товары в каталоге: {{ products|length }}</h2>
+
+{% for product in products %}
+<div class="item">
+<div>
+<b>{{ product['name'] }}</b>
+<div class="muted">
+{{ product['category'] }} ·
+Артикул: {{ product['article'] or 'не указан' }} ·
+{{ product['availability'] }}
+</div>
+</div>
+
+<form method="post" action="/admin/delete/{{ product['id'] }}"
+onsubmit="return confirm('Удалить товар?')">
+<button type="submit">Удалить</button>
+</form>
+</div>
+{% else %}
+<p class="muted">Каталог пока пуст.</p>
+{% endfor %}
+
+</main>
+</body>
+</html>

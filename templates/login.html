@@ -1,0 +1,29 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DieselDonor — Вход</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#101214;color:#eee;font:16px Arial;display:grid;place-items:center;min-height:100vh}
+.box{width:min(400px,90vw);background:#1b1f22;padding:28px;border:1px solid #444;border-radius:14px}
+h1{color:#ffd34f}
+input{width:100%;padding:13px;margin:9px 0 17px;background:#0e1012;color:white;border:1px solid #555;border-radius:7px}
+button{width:100%;padding:13px;background:#ffd34f;border:0;border-radius:7px;font-weight:bold;cursor:pointer}
+</style>
+</head>
+<body>
+<form class="box" method="post">
+<h1>DieselDonor</h1>
+<p>Вход в административную панель</p>
+{% for message in get_flashed_messages() %}
+<p>{{ message }}</p>
+{% endfor %}
+<label>Логин<input name="username" required></label>
+<label>Пароль<input type="password" name="password" required></label>
+<button type="submit">Войти</button>
+</form>
+</body>
+</html>
