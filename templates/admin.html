@@ -1,100 +1,115 @@
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>DieselDonor — Управление каталогом</title>
-<style>
-*{box-sizing:border-box}
-body{margin:0;background:#101214;color:#eee;font:15px Arial}
-main{max-width:1100px;margin:35px auto;padding:0 18px}
-h1{color:#ffd34f}
-a{color:#ffd34f}
-.panel,.item{background:#1b1f22;border:1px solid #414548;border-radius:12px;padding:18px;margin:16px 0}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
-input,textarea,select{width:100%;padding:12px;margin:7px 0 12px;background:#0e1012;color:white;border:1px solid #555;border-radius:7px}
-button{padding:12px 18px;background:#ffd34f;color:#171717;border:0;border-radius:7px;font-weight:bold;cursor:pointer}
-.item{display:flex;justify-content:space-between;gap:12px}
-.muted{color:#aaa}
-</style>
+    <meta charset="UTF-8">
+    <title>Админ-панель | DieselDonor</title>
+    <style>
+        body { margin: 0; font-family: -apple-system, sans-serif; background: #0f0f0f; color: #fff; display: flex; height: 100vh; }
+        
+        /* Sidebar */
+        .sidebar { width: 250px; background: #1a1a1a; border-right: 1px solid #333; padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+        .logo { font-size: 1.5rem; font-weight: 800; color: #FFD700; margin-bottom: 30px; text-decoration: none; }
+        .nav-item { 
+            padding: 12px 16px; border-radius: 10px; color: #888; text-decoration: none; transition: all 0.3s; cursor: pointer; display: flex; align-items: center; gap: 10px;
+        }
+        .nav-item:hover, .nav-item.active { background: rgba(255,215,0,0.1); color: #FFD700; }
+        
+        /* Main Content */
+        .main { flex: 1; padding: 40px; overflow-y: auto; }
+        .tab-content { display: none; animation: fadeIn 0.3s; }
+        .tab-content.active { display: block; }
+        
+        h2 { border-left: 4px solid #FFD700; padding-left: 15px; margin-top: 0; }
+        
+        /* Forms & Lists */
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; color: #888; font-size: 0.9rem; }
+        input, select, textarea { 
+            width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #333; 
+            background: #222; color: #fff; outline: none; box-sizing: border-box;
+        }
+        input:focus { border-color: #FFD700; }
+        .btn { background: #FFD700; color: #000; border: none; padding: 12px 24px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        
+        .product-list { display: grid; gap: 15px; margin-top: 30px; }
+        .product-item { background: #1a1a1a; padding: 20px; border-radius: 12px; border: 1px solid #333; display: flex; justify-content: space-between; align-items: center; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
 </head>
 <body>
-<main>
+    <div class="sidebar">
+        <a href="/" class="logo">DieselDonor</a>
+        <div class="nav-item active" onclick="switchTab('products')">📦 Товары</div>
+        <div class="nav-item" onclick="switchTab('messages')">💬 Сообщения</div>
+        <div class="nav-item" onclick="switchTab('settings')">⚙️ Настройки сайта</div>
+        <a href="/admin/logout" class="nav-item" style="margin-top: auto; color: #ff4444;">🚪 Выйти</a>
+    </div>
 
-<h1>DieselDonor / Админ-панель</h1>
-<p><a href="/">Открыть сайт</a> · <a href="/admin/logout">Выйти</a></p>
+    <div class="main">
+        <!-- Вкладка Товары -->
+        <div id="tab-products" class="tab-content active">
+            <h2>Управление товарами</h2>
+            <div style="background:#1a1a1a; padding:20px; border-radius:12px; margin-bottom:30px;">
+                <form action="/admin/add" method="POST">
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
+                        <div class="form-group"><label>Название</label><input name="name" required></div>
+                        <div class="form-group"><label>Категория</label>
+                            <select name="category">
+                                <option>ТНВД</option><option>Форсунки</option><option>Турбина</option><option>АКПП</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group"><label>Цена (₽)</label><input type="number" name="price"></div>
+                    <div class="form-group"><label>Ссылка на фото</label><input name="images" placeholder="https://..."></div>
+                    <button type="submit" class="btn">Добавить товар</button>
+                </form>
+            </div>
+            
+            <h3>Список товаров ({{ products|length }})</h3>
+            <div class="product-list">
+                {% for p in products %}
+                <div class="product-item">
+                    <div>
+                        <strong>{{ p.name }}</strong><br>
+                        <span style="color:#666; font-size:0.85rem;">{{ p.category }} • {{ p.price or 0 }} ₽</span>
+                    </div>
+                    <form action="/admin/delete/{{ p.id }}" method="POST" onsubmit="return confirm('Удалить?')">
+                        <button type="submit" class="btn" style="background:#ff4444; color:#fff; padding:8px 16px;">Удалить</button>
+                    </form>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
 
-{% for message in get_flashed_messages() %}
-<p>{{ message }}</p>
-{% endfor %}
+        <!-- Вкладка Сообщения (Заглушка для перехода) -->
+        <div id="tab-messages" class="tab-content">
+            <h2>Сообщения от клиентов</h2>
+            <p style="color:#888;">Здесь будут отображаться диалоги из виджета поддержки.</p>
+            <a href="/admin/chats" class="btn">Открыть полный список чатов →</a>
+        </div>
 
-<form class="panel" method="post" action="/admin/add">
-<h2>Добавить товар</h2>
+        <!-- Вкладка Настройки -->
+        <div id="tab-settings" class="tab-content">
+            <h2>Настройки сайта</h2>
+            <form action="/admin/settings" method="POST">
+                <div class="form-group"><label>Телефон</label><input name="phone" value="{{ settings.get('phone', '') }}"></div>
+                <div class="form-group"><label>Адрес</label><input name="address" value="{{ settings.get('address', '') }}"></div>
+                <div class="form-group"><label>Часы работы</label><input name="work_hours" value="{{ settings.get('work_hours', '') }}"></div>
+                <div class="form-group"><label>Заголовок на главной</label><input name="hero_title" value="{{ settings.get('hero_title', '') }}"></div>
+                <button type="submit" class="btn">Сохранить изменения</button>
+            </form>
+        </div>
+    </div>
 
-<div class="grid">
-
-<label>Название *
-<input name="name" required placeholder="ТНВД Toyota 14BT">
-</label>
-
-<label>Категория
-<select name="category">
-<option>ТНВД</option>
-<option>Форсунки</option>
-<option>Клапана</option>
-<option>Генераторы и стартеры</option>
-<option>Турбокомпрессоры</option>
-<option>Другие комплектующие</option>
-</select>
-</label>
-
-<label>Артикул
-<input name="article" placeholder="Номер детали">
-</label>
-
-<label>Ссылка на фотографию
-<input name="photo_url" type="url" placeholder="https://...">
-</label>
-
-<label>Наличие
-<select name="availability">
-<option>В наличии</option>
-<option>Уточнить наличие</option>
-</select>
-</label>
-
-</div>
-
-<label>Описание
-<textarea name="description" rows="3" placeholder="Состояние, комплектация, применимость"></textarea>
-</label>
-
-<button type="submit">Добавить товар</button>
-</form>
-
-<h2>Товары в каталоге: {{ products|length }}</h2>
-
-{% for product in products %}
-<div class="item">
-<div>
-<b>{{ product['name'] }}</b>
-<div class="muted">
-{{ product['category'] }} ·
-Артикул: {{ product['article'] or 'не указан' }} ·
-{{ product['availability'] }}
-</div>
-</div>
-
-<form method="post" action="/admin/delete/{{ product['id'] }}"
-onsubmit="return confirm('Удалить товар?')">
-<button type="submit">Удалить</button>
-</form>
-</div>
-{% else %}
-<p class="muted">Каталог пока пуст.</p>
-{% endfor %}
-
-</main>
+    <script>
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById('tab-' + tabName).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+    </script>
 </body>
 </html>
