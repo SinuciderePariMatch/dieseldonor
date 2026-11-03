@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Сообщения | DieselDonor Admin</title>
+    <style>
+        body { background: #0f0f0f; color: #fff; font-family: -apple-system, sans-serif; padding: 40px; }
+        h1 { border-left: 4px solid #FFD700; padding-left: 20px; margin-bottom: 30px; }
+        .back-link { color: #FFD700; text-decoration: none; display: inline-block; margin-bottom: 20px; }
+        .back-link:hover { text-decoration: underline; }
+        
+        .chat-list { display: grid; gap: 15px; max-width: 800px; }
+        .chat-item { 
+            background: #1a1a1a; padding: 20px; border-radius: 12px; border: 1px solid #333;
+            display: flex; justify-content: space-between; align-items: center; text-decoration: none; color: inherit;
+            transition: all 0.3s;
+        }
+        .chat-item:hover { border-color: #FFD700; transform: translateX(5px); }
+        .chat-info h3 { margin: 0 0 5px; font-size: 1.1rem; color: #fff; }
+        .chat-preview { color: #888; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 400px; }
+        .chat-meta { text-align: right; color: #666; font-size: 0.8rem; min-width: 100px; }
+        .unread { color: #FFD700; font-weight: bold; margin-top: 5px; display: block; }
+        
+        .empty-state { text-align: center; padding: 60px; color: #666; border: 2px dashed #333; border-radius: 12px; }
+    </style>
+</head>
+<body>
+    <a href="/admin" class="back-link">← Назад в админку</a>
+    <h1>💬 Сообщения от клиентов</h1>
+    
+    {% if chats %}
+    <div class="chat-list">
+        {% for chat in chats %}
+        <a href="/admin/chat/{{ chat.session_id }}" class="chat-item">
+            <div class="chat-info">
+                <h3>Клиент: {{ chat.session_id[:12] }}...</h3>
+                <div class="chat-preview">{{ chat.last_message }}</div>
+            </div>
+            <div class="chat-meta">
+                <div>{{ chat.last_msg_time.strftime('%H:%M') if chat.last_msg_time else '' }}</div>
+                {% if chat.last_sender == 'client' %}
+                    <span class="unread">● Новое</span>
+                {% endif %}
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <h2>Пока нет сообщений</h2>
+        <p>Как только клиент напишет в чат поддержки на сайте, диалог появится здесь.</p>
+    </div>
+    {% endif %}
+</body>
+</html>
