@@ -324,5 +324,43 @@ def delete_product(product_id):
 # Инициализация БД при старте
 init_db()
 
+# --- API ДЛЯ ЧАТА И ДОСТАВКИ ---
+
+@app.route("/api/calculate-delivery", methods=["POST"])
+def api_calculate_delivery():
+    """Расчет стоимости доставки (имитация тарифов ТК)"""
+    data = request.get_json()
+    city = data.get("city", "Москва")
+    weight = float(data.get("weight", 5))
+    
+    # Базовые тарифы (в реальности здесь запрос к API СДЭК/ПЭК)
+    rates = {
+        "СДЭК": {"price": int(weight * 90 + 200), "days": "2-4"},
+        "ПЭК": {"price": int(weight * 75 + 150), "days": "4-6"},
+        "Деловые Линии": {"price": int(weight * 85 + 180), "days": "3-5"}
+    }
+    
+    return jsonify(rates)
+
+
+@app.route("/api/cart/add-ajax", methods=["POST"])
+def add_to_cart_ajax():
+    """Добавление товара в корзину через чат/AJAX"""
+    product_id = int(request.form.get("product_id"))
+    qty = int(request.form.get("qty", 1))
+    
+    cart = session.get("cart", [])
+    existing = next((i for i in cart if i["id"] == product_id), None)
+    
+    if existing:
+        existing["qty"] += qty
+    else:
+        cart.append({"id": product_id, "qty": qty})
+        
+    session["cart"] = cart
+    session.modified = True
+    
+    total_items = sum(i["qty"] for i in cart)
+    return jsonify({"status": "ok", "count": total_items})
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))

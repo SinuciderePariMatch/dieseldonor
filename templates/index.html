@@ -371,48 +371,146 @@
         #chat-messages::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
     </style>
 
-    <script>
-        function toggleChat() {
-            const win = document.getElementById('chat-window');
-            if (win.style.display === 'none' || win.style.display === '') {
-                win.style.display = 'flex';
-                setTimeout(() => document.getElementById('chat-input').focus(), 100);
+ <script>
+    // Функция отправки сообщения
+    function sendMessage() {
+        const input = document.getElementById('chat-input');
+        const text = input.value.trim();
+        if (!text) return;
+
+        appendMessage('client', text);
+        input.value = '';
+
+        // Логика обработки команд
+        const lowerText = text.toLowerCase();
+        
+        if (lowerText.includes('доставк') || lowerText.includes('сколько идти') || lowerText.includes('рассчитай')) {
+            showDeliveryForm();
+        } 
+        else if (lowerText.includes('добавь') || lowerText.includes('положи') || lowerText.includes('куплю')) {
+            // В реальном проекте здесь был бы поиск по БД
+            // Сейчас имитируем: предлагаем добавить первый товар из списка популярных
+            const firstProduct = {{ popular_products[0].id if popular_products else 'null' }};
+            if (firstProduct) {
+                addToCartViaChat(firstProduct, "{{ popular_products[0].name if popular_products else 'Товар' }}");
             } else {
-                win.style.display = 'none';
+                setTimeout(() => appendMessage('manager', 'К сожалению, сейчас нет товаров для быстрого добавления. Посмотрите каталог!'), 800);
             }
         }
-
-        function sendMessage() {
-            const input = document.getElementById('chat-input');
-            const msg = input.value.trim();
-            if (!msg) return;
-
-            const container = document.getElementById('chat-messages');
-            
-            // Сообщение клиента
-            const clientMsg = document.createElement('div');
-            clientMsg.style.cssText = 'align-self: flex-end; background: var(--accent); color: #000; padding: 12px 16px; border-radius: 18px 18px 4px 18px; max-width: 85%; font-size: 0.9rem; font-weight: 500; animation: slideUp 0.2s ease-out;';
-            clientMsg.textContent = msg;
-            container.appendChild(clientMsg);
-            
-            input.value = '';
-            container.scrollTop = container.scrollHeight;
-
-            // Имитация ответа менеджера (через 1.5 сек)
+        else {
+            // Стандартный ответ менеджера с кнопками действий
             setTimeout(() => {
-                const managerMsg = document.createElement('div');
-                managerMsg.style.cssText = 'align-self: flex-start; background: rgba(255,255,255,0.1); padding: 12px 16px; border-radius: 18px 18px 18px 4px; max-width: 85%; font-size: 0.9rem; color: #e8e8ed; line-height: 1.4; animation: slideUp 0.2s ease-out;';
-                
-                // Простая логика ответов
-                let reply = "Спасибо за сообщение! Менеджер скоро подключится к диалогу. А пока вы можете посмотреть наш каталог или написать нам в WhatsApp: +7 (951) 011-58-78";
-                if (msg.toLowerCase().includes('цена') || msg.toLowerCase().includes('сколько')) reply = "Цены указаны в карточках товаров. Для точного расчета доставки напишите ваш город.";
-                if (msg.toLowerCase().includes('доставк')) reply = "Отправляем СДЭК, ПЭК, Деловыми Линиями по всей России. Срок доставки обычно 3-7 дней.";
-                
-                managerMsg.innerHTML = reply;
-                container.appendChild(managerMsg);
-                container.scrollTop = container.scrollHeight;
-            }, 1500);
+                appendMessage('manager', 'Я понял ваш запрос! Чем еще могу помочь?');
+                appendActionButtons();
+            }, 1000);
         }
+    }
+
+    // Показ формы расчета доставки прямо в чате
+    function showDeliveryForm() {
+        const container = document.getElementById('chat-messages');
+        const formDiv = document.createElement('div');
+        formDiv.className = 'chat-form-container';
+        formDiv.style.cssText = 'align-self:flex-start; background:rgba(255,255,255,0.05); padding:16px; border-radius:18px; max-width:90%; animation:slideUp 0.3s;';
+        formDiv.innerHTML = `
+            <div style="font-size:0.85rem; color:#86868b; margin-bottom:10px;">🚚 Расчет доставки</div>
+            <input type="text" id="chat-city" placeholder="Ваш город" style="width:100%; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:10px; color:#fff; margin-bottom:8px; outline:none;">
+            <input type="number" id="chat-weight" placeholder="Вес (кг)" value="5" style="width:100%; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:10px; color:#fff; margin-bottom:10px; outline:none;">
+            <button onclick="calcDelivery()" style="width:100%; background:var(--accent); border:none; border-radius:12px; padding:10px; font-weight:700; cursor:pointer;">Рассчитать</button>
+        `;
+        container.appendChild(formDiv);
+        container.scrollTop = container.scrollHeight;
+    }
+
+    // AJAX запрос к API доставки
+    async function calcDelivery() {
+        const city = document.getElementById('chat-city').value || 'Москва';
+        const weight = document.getElementById('chat-weight').value || 5;
+        
+        // Удаляем форму и показываем загрузку
+        const btn = event.target;
+        btn.textContent = 'Считаем...';
+        btn.disabled = true;
+
+        try {
+            const res = await fetch('/api/calculate-delivery', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({city, weight})
+            });
+            const data = await res.json();
+            
+            let resultHtml = `✅ <b>Доставка в г. ${city} (${weight} кг):</b><br><br>`;
+            for (const [tk, info] of Object.entries(data)) {
+                resultHtml += `• <b>${tk}</b>: ${info.price} ₽ <span style="color:#86868b">(${info.days} дн.)</span><br>`;
+            }
+            appendMessage('manager', resultHtml);
+        } catch (e) {
+            appendMessage('manager', '❌ Ошибка расчета. Попробуйте позже или напишите менеджеру в WhatsApp.');
+        }
+    }
+
+    // Добавление товара в корзину через AJAX
+    async function addToCartViaChat(productId, productName) {
+        try {
+            const formData = new FormData();
+            formData.append('product_id', productId);
+            
+            const res = await fetch('/api/cart/add-ajax', {method: 'POST', body: formData});
+            const data = await res.json();
+            
+            if (data.status === 'ok') {
+                appendMessage('manager', `✅ Товар "<b>${productName}</b>" добавлен в корзину!<br>Всего товаров: ${data.count}`);
+                updateCartBadge(data.count);
+            }
+        } catch (e) {
+            appendMessage('manager', '❌ Не удалось добавить товар. Попробуйте сделать это вручную в каталоге.');
+        }
+    }
+
+    // Кнопки быстрых действий
+    function appendActionButtons() {
+        const container = document.getElementById('chat-messages');
+        const btnsDiv = document.createElement('div');
+        btnsDiv.style.cssText = 'align-self:flex-start; display:flex; gap:8px; flex-wrap:wrap; margin-top:5px; animation:slideUp 0.3s;';
+        
+        const actions = [
+            {text: '🚚 Рассчитать доставку', action: 'showDeliveryForm()'},
+            {text: '🛒 Добавить ТНВД', action: `addToCartViaChat({{ popular_products[0].id if popular_products else 1 }}, '{{ popular_products[0].name if popular_products else "ТНВД" }}')`}
+        ];
+        
+        actions.forEach(act => {
+            const btn = document.createElement('button');
+            btn.textContent = act.text;
+            btn.onclick = () => eval(act.action); // В продакшене лучше использовать data-action атрибуты
+            btn.style.cssText = 'background:rgba(255,215,0,0.1); border:1px solid var(--accent); color:var(--accent); padding:8px 14px; border-radius:20px; font-size:0.8rem; cursor:pointer; transition:all 0.2s;';
+            btn.onmouseover = () => {btn.style.background='var(--accent)'; btn.style.color='#000';};
+            btn.onmouseout = () => {btn.style.background='rgba(255,215,0,0.1)'; btn.style.color='var(--accent)';};
+            btnsDiv.appendChild(btn);
+        });
+        
+        container.appendChild(btnsDiv);
+        container.scrollTop = container.scrollHeight;
+    }
+
+    // Обновление счетчика корзины в шапке
+    function updateCartBadge(count) {
+        const badge = document.querySelector('.nav-cart span');
+        if (badge) badge.textContent = count;
+    }
+
+    // Базовая функция вывода сообщений
+    function appendMessage(sender, html) {
+        const container = document.getElementById('chat-messages');
+        const div = document.createElement('div');
+        div.innerHTML = html;
+        div.style.cssText = sender === 'client' 
+            ? 'align-self:flex-end; background:var(--accent); color:#000; padding:12px 16px; border-radius:18px 18px 4px 18px; max-width:85%; font-size:0.9rem; animation:slideUp 0.2s;'
+            : 'align-self:flex-start; background:rgba(255,255,255,0.1); padding:12px 16px; border-radius:18px 18px 18px 4px; max-width:85%; font-size:0.9rem; color:#e8e8ed; animation:slideUp 0.2s; line-height:1.5;';
+        container.appendChild(div);
+        container.scrollTop = container.scrollHeight;
+    }
+</script>
     </script>
 </body>
 </html>
