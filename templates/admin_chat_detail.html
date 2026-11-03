@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Чат с {{ session_id }} | DieselDonor Admin</title>
+    <style>
+        body { background: #0f0f0f; color: #fff; font-family: -apple-system, sans-serif; padding: 40px; display: flex; flex-direction: column; height: 90vh; margin: 0; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .back-link { color: #FFD700; text-decoration: none; font-weight: bold; }
+        
+        .chat-window { 
+            flex: 1; background: #1a1a1a; border-radius: 16px; padding: 20px; 
+            overflow-y: auto; display: flex; flex-direction: column; gap: 15px; 
+            border: 1px solid #333; margin-bottom: 20px;
+        }
+        
+        .msg { max-width: 80%; padding: 12px 16px; border-radius: 16px; line-height: 1.5; word-wrap: break-word; }
+        .msg.client { align-self: flex-start; background: #333; border-bottom-left-radius: 4px; }
+        .msg.manager { align-self: flex-end; background: #FFD700; color: #000; border-bottom-right-radius: 4px; }
+        .msg-time { font-size: 0.7rem; opacity: 0.6; display: block; margin-bottom: 4px; }
+        
+        .reply-box { display: flex; gap: 10px; }
+        input { flex: 1; padding: 15px; border-radius: 12px; border: 1px solid #333; background: #1a1a1a; color: #fff; outline: none; }
+        button { padding: 15px 30px; background: #FFD700; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; color: #000; }
+        button:hover { opacity: 0.9; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div>
+            <a href="/admin/chats" class="back-link">← Все чаты</a>
+            <h2 style="margin: 10px 0 0;">Диалог: {{ session_id }}</h2>
+        </div>
+    </div>
+    
+    <div class="chat-window" id="chatWindow">
+        {% for msg in messages %}
+        <div class="msg {{ msg.sender }}">
+            <span class="msg-time">{{ msg.sender|upper }} • {{ msg.created_at.strftime('%H:%M') }}</span>
+            {{ msg.message }}
+        </div>
+        {% else %}
+        <div style="text-align:center; color:#666; margin-top:50px;">История сообщений пуста</div>
+        {% endfor %}
+    </div>
+
+    <form class="reply-box" onsubmit="sendReply(event)">
+        <input type="text" id="replyInput" placeholder="Напишите ответ..." required autocomplete="off">
+        <button type="submit">Отправить</button>
+    </form>
+
+    <script>
+        const sessionId = "{{ session_id }}";
+        const chatWindow = document.getElementById('chatWindow');
+        
+        // Прокрутка вниз при загрузке
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+
+        async function sendReply(e) {
+            e.preventDefault();
+            const input = document.getElementById('replyInput');
+            const msg = input.value.trim();
+            if (!msg) return;
+
+            // Добавляем сообщение в UI сразу (оптимистичный рендер)
+            const now = new Date();
+            const timeStr = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+            
+            const div = document.createElement('div');
+            div.className = 'msg manager';
+            div.innerHTML = `<span class="msg-time">MANAGER • ${timeStr}</span>${msg}`;
+            chatWindow.appendChild(div);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+            input.value = '';
+
+            // Отправляем на сервер
+            try {
+                await fetch('/api/chat/reply', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({session_id: sessionId, message: msg})
+                });
+            } catch (err) {
+                alert('Ошибка отправки сообщения');
+            }
+        }
+
+        // Автообновление чата каждые 3 секунды
+        setInterval(async () => {
+            try {
+                const res = await fetch(`/api/chat/history/${sessionId}`);
+                const msgs = await res.json();
+                
+                // Перерисовываем весь чат, чтобы увидеть ответы клиента
+                if (msgs.length > 0) {
+                    chatWindow.innerHTML = msgs.map(m => {
+                        const date = new Date(m.created_at);
+                        const time = date.getHours().toString().padStart(2,'0') + ':' + date.getMinutes().toString().padStart(2,'0');
+                        return `
+                            <div class="msg ${m.sender}">
+                                <span class="msg-time">${m.sender.toUpperCase()} • ${time}</span>
+                                ${m.message}
+                            </div>
+                        `;
+                    }).join('');
+                    chatWindow.scrollTop = chatWindow.scrollHeight;
+                }
+            } catch (e) {}
+        }, 3000);
+    </script>
+</body>
+</html>
