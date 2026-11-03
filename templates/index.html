@@ -359,7 +359,7 @@
             // Фокус на поле "Куда" для удобства
             setTimeout(() => document.getElementById('chat-city-to').focus(), 100);
         }
-        async function calcDelivery() {
+               async function calcDelivery() {
             const cityFrom = document.getElementById('chat-city-from').value || 'Владивосток';
             const cityTo = document.getElementById('chat-city-to').value || 'Москва';
             const weight = document.getElementById('chat-weight').value || 5;
@@ -371,6 +371,11 @@
             btn.style.opacity = '0.7';
 
             try {
+                console.log('Отправляем запрос:', {city_from: cityFrom, city_to: cityTo, weight: weight});
+                
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 15000); // Таймаут 15 сек
+                
                 const res = await fetch('/api/calculate-delivery', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
@@ -378,32 +383,47 @@
                         city_from: cityFrom, 
                         city_to: cityTo, 
                         weight: parseFloat(weight)
-                    })
+                    }),
+                    signal: controller.signal
                 });
+                
+                clearTimeout(timeoutId);
+                
+                if (!res.ok) {
+                    throw new Error(`HTTP error! status: ${res.status}`);
+                }
+                
                 const data = await res.json();
+                console.log('Ответ сервера:', data);
                 
                 let resultHtml = `✅ <b>Маршрут: ${cityFrom} → ${cityTo}</b> (${weight} кг)<br><br>`;
                 
-                // Если бэкенд возвращает объект с ТК (как в прошлом коде)
                 if (data.price) {
-                     resultHtml += `• <b>Средняя стоимость:</b> ${data.price} ₽<br>`;
+                     resultHtml += `• <b>Стоимость:</b> ${data.price} ₽<br>`;
                      resultHtml += `• <b>Срок:</b> ${data.days} дн.<br>`;
-                } else {
-                    // Если бэкенд возвращает список ТК
+                } else if (typeof data === 'object') {
                     for (const [tk, info] of Object.entries(data)) {
-                        if (typeof info === 'object' && info.price) {
+                        if (info && typeof info === 'object' && info.price) {
                             resultHtml += `• <b>${tk}</b>: ${info.price} ₽ <span style="color:#86868b">(${info.days} дн.)</span><br>`;
                         }
                     }
+                } else {
+                    resultHtml += '❓ Неизвестный формат ответа от сервера.';
                 }
                 
                 appendMessage('manager', resultHtml);
                 
-                // Удаляем форму после расчета, чтобы не загромождать чат
-                formDiv.remove(); 
-                
             } catch (e) {
-                appendMessage('manager', '❌ Не удалось рассчитать доставку. Попробуйте позже или уточните у менеджера.');
+                console.error('Ошибка расчета:', e);
+                let errorMsg = '❌ Ошибка расчета: ';
+                if (e.name === 'AbortError') {
+                    errorMsg += 'Сервер долго отвечает (возможно, спит). Попробуйте еще раз через минуту.';
+                } else if (e.message.includes('Failed to fetch')) {
+                    errorMsg += 'Нет связи с сервером. Проверьте интернет или попробуйте позже.';
+                } else {
+                    errorMsg += e.message;
+                }
+                appendMessage('manager', errorMsg);
             } finally {
                 btn.textContent = originalText;
                 btn.disabled = false;
