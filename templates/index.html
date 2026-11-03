@@ -88,6 +88,101 @@
 
         /* --- PRODUCTS SCROLL --- */
         .products-scroll { display: flex; gap: 20px; overflow-x: auto; padding: 20px 40px 60px; scrollbar-width: none; }
+        .products-scroll::-webkitЕвгений, вот **полный код `templates/index.html`**, в который я уже внедрил логику сохранения чата в базу данных и автоматическую проверку новых ответов от менеджера.
+
+Тебе не нужно ничего искать или дописывать — просто скопируй этот файл целиком и замени им свой текущий `index.html`.
+
+```html
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DieselDonor | Контрактные ТНВД</title>
+    <style>
+        :root {
+            --bg-main: #000000;
+            --bg-card: rgba(28, 28, 30, 0.6);
+            --accent: #FFD700;
+            --text-main: #f5f5f7;
+            --text-sec: #86868b;
+            --border: rgba(255, 255, 255, 0.1);
+            --blur: blur(20px);
+        }
+
+        * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+        
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: var(--bg-main);
+            color: var(--text-main);
+            line-height: 1.5;
+            overflow-x: hidden;
+        }
+
+        /* --- NAVIGATION --- */
+        nav {
+            position: sticky; top: 0; z-index: 1000;
+            background: rgba(0, 0, 0, 0.7); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
+            border-bottom: 1px solid var(--border); padding: 0 40px; height: 60px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .nav-logo { font-size: 1.2rem; font-weight: 700; letter-spacing: -0.5px; text-decoration: none; color: #fff; }
+        .nav-logo span { color: var(--accent); }
+        .nav-links { display: flex; gap: 30px; font-size: 0.8rem; color: #e8e8ed; }
+        .nav-links a { text-decoration: none; color: inherit; transition: color 0.3s; opacity: 0.8; }
+        .nav-links a:hover { opacity: 1; color: var(--accent); }
+        .nav-cart { 
+            background: rgba(255,255,255,0.1); padding: 6px 16px; border-radius: 20px; 
+            font-size: 0.8rem; text-decoration: none; color: #fff; display: flex; align-items: center; gap: 6px; transition: background 0.3s; 
+        }
+        .nav-cart:hover { background: rgba(255,255,255,0.2); }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            position: relative; height: 90vh; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; text-align: center; padding: 0 20px;
+            background: url('https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?q=80&w=2574&auto=format&fit=crop') no-repeat center center/cover;
+        }
+        .hero::before { content: ''; position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.9)); }
+        .hero-content { position: relative; z-index: 2; max-width: 800px; }
+        
+        h1 { font-size: clamp(3rem, 6vw, 5rem); font-weight: 700; letter-spacing: -2px; margin: 0 0 20px; line-height: 1.1; }
+        .hero-sub { font-size: 1.5rem; color: var(--text-sec); margin-bottom: 40px; font-weight: 400; }
+        
+        .search-wrapper {
+            width: 100%; max-width: 600px; margin: 0 auto; background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px); border-radius: 50px; padding: 6px; display: flex;
+            border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s;
+        }
+        .search-wrapper:focus-within { background: rgba(255,255,255,0.15); border-color: var(--accent); }
+        .search-input { flex: 1; background: transparent; border: none; outline: none; color: #fff; padding: 15px 25px; font-size: 1.1rem; }
+        .search-btn {
+            background: var(--accent); color: #000; border: none; border-radius: 50px;
+            padding: 0 35px; font-weight: 600; cursor: pointer; transition: transform 0.2s;
+        }
+        .search-btn:hover { transform: scale(1.05); }
+
+        /* --- BENTO GRID & SECTIONS --- */
+        .bento-section { padding: 100px 40px; max-width: 1200px; margin: 0 auto; }
+        .section-head { font-size: 3rem; font-weight: 700; margin-bottom: 60px; text-align: center; letter-spacing: -1px; }
+        
+        .bento-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+        .bento-card {
+            background: var(--bg-card); border-radius: 30px; padding: 40px; position: relative;
+            overflow: hidden; border: 1px solid var(--border); display: flex; flex-direction: column; justify-content: space-between; min-height: 350px;
+        }
+        .bento-card.large { grid-column: span 2; background: linear-gradient(135deg, #1c1c1e 0%, #2c2c2e 100%); }
+        .bento-card.tall { grid-row: span 2; }
+        
+        .card-label { font-size: 0.9rem; color: var(--text-sec); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+        .card-title { font-size: 2rem; font-weight: 700; margin: 0 0 15px; letter-spacing: -0.5px; }
+        .card-desc { color: var(--text-sec); font-size: 1.1rem; line-height: 1.6; margin: 0; }
+        .card-link { margin-top: 20px; color: var(--accent); text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 5px; }
+
+        /* --- PRODUCTS SCROLL --- */
+        .products-scroll { display: flex; gap: 20px; overflow-x: auto; padding: 20px 40px 60px; scrollbar-width: none; }
         .products-scroll::-webkit-scrollbar { display: none; }
         .product-card {
             min-width: 300px; background: var(--bg-card); border-radius: 24px;
@@ -164,15 +259,38 @@
                 <p class="card-desc">Работаем с СДЭК, ПЭК, Деловыми Линиями. Быстрая доставка в любой регион.</p>
             </div>
 
-            <div class="bento-card tall reveal reveal-delay-2">
-                <div class="card-label">Ассортимент</div>
-                <h3 class="card-title">В наличии</h3>
-                <ul style="list-style:none; padding:0; margin:20px 0; color:var(--text-sec); line-height:2;">
-                    <li style="border-bottom:1px solid var(--border); padding:10px 0;">⛽ ТНВД (насосы)</li>
-                    <li style="border-bottom:1px solid var(--border); padding:10px 0;">💉 Форсунки</li>
-                    <li style="border-bottom:1px solid var(--border); padding:10px 0;">🔩 Клапана и детали</li>
-                    <li style="padding:10px 0;">🌪️ Турбины</li>
-                </ul>
+            <!-- АКТИВНЫЙ БЛОК АССОРТИМЕНТА -->
+            <div class="bento-card tall reveal reveal-delay-2" style="padding: 0;">
+                <div style="padding: 40px 40px 20px;">
+                    <div class="card-label">АССОРТИМЕНТ</div>
+                    <h3 class="card-title" style="margin-bottom: 30px;">В наличии</h3>
+                </div>
+                
+                <div style="display: flex; flex-direction: column;">
+                    <a href="/catalog?cat=ТНВД" style="text-decoration: none; color: inherit; padding: 20px 40px; border-top: 1px solid var(--border); transition: all 0.3s; display: flex; align-items: center; gap: 15px;" onmouseover="this.style.background='rgba(255,215,0,0.1)'; this.style.color='#FFD700'" onmouseout="this.style.background='transparent'; this.style.color='inherit'">
+                        <span style="font-size: 1.5rem;">⛽</span>
+                        <span style="font-weight: 600; font-size: 1.1rem;">ТНВД (насосы)</span>
+                        <span style="margin-left: auto; opacity: 0.5;">→</span>
+                    </a>
+                    
+                    <a href="/catalog?cat=Форсунки" style="text-decoration: none; color: inherit; padding: 20px 40px; border-top: 1px solid var(--border); transition: all 0.3s; display: flex; align-items: center; gap: 15px;" onmouseover="this.style.background='rgba(255,215,0,0.1)'; this.style.color='#FFD700'" onmouseout="this.style.background='transparent'; this.style.color='inherit'">
+                        <span style="font-size: 1.5rem;">💉</span>
+                        <span style="font-weight: 600; font-size: 1.1rem;">Форсунки</span>
+                        <span style="margin-left: auto; opacity: 0.5;">→</span>
+                    </a>
+                    
+                    <a href="/catalog?cat=Клапана" style="text-decoration: none; color: inherit; padding: 20px 40px; border-top: 1px solid var(--border); transition: all 0.3s; display: flex; align-items: center; gap: 15px;" onmouseover="this.style.background='rgba(255,215,0,0.1)'; this.style.color='#FFD700'" onmouseout="this.style.background='transparent'; this.style.color='inherit'">
+                        <span style="font-size: 1.5rem;">🔩</span>
+                        <span style="font-weight: 600; font-size: 1.1rem;">Клапана и детали</span>
+                        <span style="margin-left: auto; opacity: 0.5;">→</span>
+                    </a>
+                    
+                    <a href="/catalog?cat=Турбина" style="text-decoration: none; color: inherit; padding: 20px 40px; border-top: 1px solid var(--border); transition: all 0.3s; display: flex; align-items: center; gap: 15px;" onmouseover="this.style.background='rgba(255,215,0,0.1)'; this.style.color='#FFD700'" onmouseout="this.style.background='transparent'; this.style.color='inherit'">
+                        <span style="font-size: 1.5rem;">🌪️</span>
+                        <span style="font-weight: 600; font-size: 1.1rem;">Турбины</span>
+                        <span style="margin-left: auto; opacity: 0.5;">→</span>
+                    </a>
+                </div>
             </div>
 
             <div class="bento-card reveal reveal-delay-3">
@@ -278,6 +396,10 @@
         const FIRST_PRODUCT_ID = appData.firstProductId || null;
         const FIRST_PRODUCT_NAME = appData.firstProductName || 'ТНВД';
 
+        // --- ЛОГИКА ЧАТА С СОХРАНЕНИЕМ В БД ---
+        const CHAT_SESSION_ID = localStorage.getItem('chat_session_id') || 'user_' + Math.random().toString(36).substr(2, 9);
+        localStorage.setItem('chat_session_id', CHAT_SESSION_ID);
+
         function toggleChat() {
             const win = document.getElementById('chat-window');
             if (win.style.display === 'none' || win.style.display === '') {
@@ -312,27 +434,48 @@
             appendMessage('client', text);
             input.value = '';
 
+            // 1. Сохраняем сообщение клиента в БД
+            fetch('/api/chat/save', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    session_id: CHAT_SESSION_ID,
+                    sender: 'client',
+                    message: text
+                })
+            }).catch(e => console.error('Save error:', e));
+
+            // 2. Логика бота
             const lowerText = text.toLowerCase();
-            
-            if (lowerText.includes('доставк') || lowerText.includes('сколько идти') || lowerText.includes('рассчитай')) {
+            if (lowerText.includes('доставк') || lowerText.includes('рассчитай')) {
                 showDeliveryForm();
-            } 
-            else if (lowerText.includes('добавь') || lowerText.includes('положи') || lowerText.includes('куплю')) {
-                if (FIRST_PRODUCT_ID) {
-                    addToCartViaChat(FIRST_PRODUCT_ID, FIRST_PRODUCT_NAME);
-                } else {
-                    setTimeout(() => appendMessage('manager', 'К сожалению, сейчас нет товаров для быстрого добавления. Посмотрите каталог!'), 800);
-                }
-            }
-            else {
+            } else if (lowerText.includes('добавь') || lowerText.includes('куплю')) {
+                if (FIRST_PRODUCT_ID) addToCartViaChat(FIRST_PRODUCT_ID, FIRST_PRODUCT_NAME);
+            } else {
                 setTimeout(() => {
-                    appendMessage('manager', 'Я понял ваш запрос! Чем еще могу помочь?');
+                    appendMessage('manager', 'Я передал ваш вопрос менеджеру. Ожидайте ответа!');
                     appendActionButtons();
                 }, 1000);
             }
         }
 
-        // --- НОВАЯ ФОРМА РАСЧЕТА ДОСТАВКИ ---
+        // Автопроверка новых ответов от менеджера каждые 5 сек
+        setInterval(async () => {
+            try {
+                const res = await fetch(`/api/chat/history/${CHAT_SESSION_ID}`);
+                const msgs = await res.json();
+                const lastMsg = msgs[msgs.length - 1];
+                if (lastMsg && lastMsg.sender === 'manager') {
+                    const container = document.getElementById('chat-messages');
+                    // Простая защита от дублей
+                    if (!container.innerHTML.includes(lastMsg.message.substring(0, 20))) {
+                        appendMessage('manager', lastMsg.message);
+                    }
+                }
+            } catch (e) {}
+        }, 5000);
+
+        // --- ФОРМА РАСЧЕТА ДОСТАВКИ ---
         function showDeliveryForm() {
             const container = document.getElementById('chat-messages');
             const formDiv = document.createElement('div');
@@ -359,7 +502,6 @@
             setTimeout(() => document.getElementById('chat-city-to').focus(), 100);
         }
 
-        // --- ОБНОВЛЕННЫЙ РАСЧЕТ С ОБРАБОТКОЙ ОШИБОК ---
         async function calcDelivery() {
             const cityFrom = document.getElementById('chat-city-from').value || 'Владивосток';
             const cityTo = document.getElementById('chat-city-to').value || 'Москва';
@@ -373,7 +515,7 @@
 
             try {
                 const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 15000); // Таймаут 15 сек
+                const timeoutId = setTimeout(() => controller.abort(), 15000);
                 
                 const res = await fetch('/api/calculate-delivery', {
                     method: 'POST',
@@ -388,15 +530,12 @@
                 
                 clearTimeout(timeoutId);
                 
-                if (!res.ok) {
-                    throw new Error(`Сервер вернул ошибку ${res.status}`);
-                }
+                if (!res.ok) throw new Error(`Сервер вернул ошибку ${res.status}`);
                 
                 const data = await res.json();
                 
                 let resultHtml = `✅ <b>Маршрут: ${cityFrom} → ${cityTo}</b> (${weight} кг)<br><br>`;
                 
-                // Обработка разных форматов ответа
                 if (data.price) {
                      resultHtml += `• <b>Стоимость:</b> ${data.price} ₽<br>`;
                      resultHtml += `• <b>Срок:</b> ${data.days} дн.<br>`;
@@ -415,13 +554,10 @@
             } catch (e) {
                 console.error('Calc error:', e);
                 let errorMsg = '❌ Ошибка расчета: ';
-                if (e.name === 'AbortError') {
-                    errorMsg += 'Сервер долго отвечает (возможно, спит). Попробуйте через минуту.';
-                } else if (e.message.includes('Failed to fetch')) {
-                    errorMsg += 'Нет связи с сервером.';
-                } else {
-                    errorMsg += e.message;
-                }
+                if (e.name === 'AbortError') errorMsg += 'Сервер долго отвечает. Попробуйте через минуту.';
+                else if (e.message.includes('Failed to fetch')) errorMsg += 'Нет связи с сервером.';
+                else errorMsg += e.message;
+                
                 appendMessage('manager', errorMsg);
             } finally {
                 btn.textContent = originalText;
