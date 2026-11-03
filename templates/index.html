@@ -5,49 +5,191 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DieselDonor | Контрактные запчасти</title>
     <style>
-        body { margin: 0; font-family: 'Inter', sans-serif; background: #121212; color: #fff; }
-        
+        :root {
+            --bg-main: #0f0f0f;
+            --bg-card: #1a1a1a;
+            --accent: #FFD700; /* Золотой */
+            --text-main: #ffffff;
+            --text-sec: #a0a0a0;
+            --border: #333333;
+        }
+
+        body { 
+            margin: 0; 
+            font-family: 'Inter', system-ui, -apple-system, sans-serif; 
+            background: var(--bg-main); 
+            color: var(--text-main); 
+            line-height: 1.6;
+        }
+
         /* Hero Section */
-        .hero { padding: 80px 20px; text-align: center; border-bottom: 1px solid #222; }
-        h1 { font-size: 3rem; margin: 0 0 15px; letter-spacing: -1px; }
-        .subtitle { color: #aaa; font-size: 1.2rem; max-width: 600px; margin: 0 auto 30px; line-height: 1.5; }
+        .hero { 
+            padding: 100px 20px; 
+            text-align: center; 
+            background: radial-gradient(circle at center, #1f1f1f 0%, #0f0f0f 70%);
+            border-bottom: 1px solid var(--border);
+        }
+        h1 { 
+            font-size: 3.5rem; 
+            margin: 0 0 20px; 
+            letter-spacing: -1px; 
+            background: linear-gradient(to right, #fff, #ccc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .subtitle { 
+            color: var(--text-sec); 
+            font-size: 1.3rem; 
+            max-width: 650px; 
+            margin: 0 auto 40px; 
+        }
         
-        .btn-group { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
-        .btn { padding: 14px 28px; border-radius: 12px; text-decoration: none; font-weight: 600; transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px; }
-        .btn-primary { background: #FFD700; color: #000; }
-        .btn-secondary { background: #2a2a2a; color: #fff; border: 1px solid #444; }
-        .btn:hover { transform: translateY(-2px); opacity: 0.9; }
+        .btn-group { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
+        .btn { 
+            padding: 16px 32px; 
+            border-radius: 50px; 
+            text-decoration: none; 
+            font-weight: 700; 
+            transition: all 0.3s ease; 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 10px; 
+            font-size: 1.1rem;
+        }
+        .btn-primary { background: var(--accent); color: #000; box-shadow: 0 4px 20px rgba(255, 215, 0, 0.2); }
+        .btn-secondary { background: rgba(255,255,255,0.05); color: #fff; border: 1px solid var(--border); backdrop-filter: blur(10px); }
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .btn-primary:hover { background: #ffe033; }
 
         /* Преимущества */
-        .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; max-width: 1000px; margin: 60px auto; padding: 0 20px; }
-        .feature-card { background: #1e1e1e; padding: 25px; border-radius: 16px; border: 1px solid #333; text-align: center; }
-        .feature-icon { font-size: 2rem; margin-bottom: 10px; display: block; }
-        .feature-title { font-weight: bold; margin-bottom: 5px; color: #FFD700; }
-        .feature-desc { color: #888; font-size: 0.9rem; }
+        .features { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+            gap: 30px; 
+            max-width: 1200px; 
+            margin: 80px auto; 
+            padding: 0 20px; 
+        }
+        .feature-card { 
+            background: var(--bg-card); 
+            padding: 40px 30px; 
+            border-radius: 24px; 
+            border: 1px solid var(--border); 
+            text-align: center; 
+            transition: transform 0.3s;
+        }
+        .feature-card:hover { transform: translateY(-5px); border-color: var(--accent); }
+        .feature-icon { font-size: 2.5rem; margin-bottom: 20px; display: block; }
+        .feature-title { font-weight: 800; margin-bottom: 10px; color: var(--accent); font-size: 1.2rem; }
+        .feature-desc { color: var(--text-sec); font-size: 0.95rem; }
 
-        /* Физические кнопки категорий */
-        .categories-section { text-align: center; padding: 40px 20px; background: #181818; }
-        .cat-grid { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; max-width: 1000px; margin: 0 auto; }
-        .cat-btn-large { padding: 15px 30px; background: #252525; border: 1px solid #444; border-radius: 12px; color: #fff; text-decoration: none; font-weight: 600; transition: all 0.3s; min-width: 180px; text-align: center; }
-        .cat-btn-large:hover { background: #FFD700; color: #000; border-color: #FFD700; transform: scale(1.05); }
+        /* Категории (Физические кнопки) */
+        .categories-section { 
+            text-align: center; 
+            padding: 60px 20px; 
+            background: #141414; 
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+        .section-header { font-size: 2rem; margin-bottom: 40px; font-weight: 800; }
+        .cat-grid { 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 15px; 
+            justify-content: center; 
+            max-width: 1000px; 
+            margin: 0 auto; 
+        }
+        .cat-btn-large { 
+            padding: 18px 35px; 
+            background: var(--bg-card); 
+            border: 1px solid var(--border); 
+            border-radius: 16px; 
+            color: #fff; 
+            text-decoration: none; 
+            font-weight: 600; 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+            min-width: 200px; 
+            text-align: center; 
+            position: relative;
+            overflow: hidden;
+        }
+        .cat-btn-large::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--accent);
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 0;
+        }
+        .cat-btn-large span { position: relative; z-index: 1; }
+        .cat-btn-large:hover { 
+            border-color: var(--accent); 
+            transform: scale(1.05); 
+            color: #000;
+        }
+        .cat-btn-large:hover::before { opacity: 1; }
 
-        /* Популярные товары */
-        .popular-section { max-width: 1200px; margin: 60px auto; padding: 0 20px; }
-        .section-title { font-size: 1.8rem; margin-bottom: 30px; border-left: 4px solid #FFD700; padding-left: 15px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
-        .card { background: #1e1e1e; border-radius: 16px; overflow: hidden; border: 1px solid #333; }
-        .card img { width: 100%; height: 200px; object-fit: cover; background: #2a2a2a; }
-        .info { padding: 16px; }
-        .price { color: #FFD700; font-size: 1.2rem; font-weight: bold; margin-top: 8px; }
-        .title { font-size: 1rem; margin: 0; line-height: 1.4; }
-        .meta { color: #777; font-size: 0.85rem; margin-top: 6px; }
+        /* Популярные товары (Живая витрина) */
+        .popular-section { 
+            max-width: 1200px; 
+            margin: 100px auto; 
+            padding: 0 20px; 
+        }
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
+            gap: 25px; 
+        }
+        .card { 
+            background: var(--bg-card); 
+            border-radius: 20px; 
+            overflow: hidden; 
+            border: 1px solid var(--border); 
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+        .card:hover { border-color: var(--accent); transform: translateY(-5px); }
+        .card-img-wrap { 
+            height: 220px; 
+            background: #252525; 
+            position: relative;
+            overflow: hidden;
+        }
+        .card img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            transition: transform 0.5s;
+        }
+        .card:hover img { transform: scale(1.1); }
+        .info { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; }
+        .price { 
+            color: var(--accent); 
+            font-size: 1.4rem; 
+            font-weight: 800; 
+            margin-top: auto; 
+            padding-top: 15px;
+        }
+        .title { font-size: 1.05rem; margin: 0; line-height: 1.4; font-weight: 600; }
+        .meta { color: #666; font-size: 0.85rem; margin-top: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
 
-        footer { padding: 40px 20px; text-align: center; color: #555; font-size: 0.9rem; border-top: 1px solid #222; margin-top: 60px; }
+        footer { 
+            padding: 60px 20px; 
+            text-align: center; 
+            color: #444; 
+            font-size: 0.9rem; 
+            border-top: 1px solid var(--border); 
+            margin-top: 80px; 
+        }
         
-        @media (max-width: 600px) { 
-            h1 { font-size: 2rem; } 
+        @media (max-width: 768px) { 
+            h1 { font-size: 2.2rem; } 
             .btn { width: 100%; justify-content: center; } 
             .cat-btn-large { width: 100%; }
+            .hero { padding: 60px 20px; }
         }
     </style>
 </head>
@@ -55,10 +197,10 @@
     <!-- Hero -->
     <div class="hero">
         <h1>DieselDonor</h1>
-        <p class="subtitle">Контрактные запчасти для дизельных двигателей.<br>Без пробега по РФ. Отправка в регионы.</p>
+        <p class="subtitle">Контрактные запчасти для дизельных двигателей.<br>Прямые поставки из Японии и Кореи без пробега по РФ.</p>
         <div class="btn-group">
             <a href="/catalog" class="btn btn-primary">📂 Перейти в каталог</a>
-            <a href="https://wa.me/79000000000" target="_blank" class="btn btn-secondary">📞 Написать в WhatsApp</a>
+            <a href="https://wa.me/79000000000" target="_blank" class="btn btn-secondary">💬 Написать в WhatsApp</a>
         </div>
     </div>
 
@@ -67,22 +209,74 @@
         <div class="feature-card">
             <span class="feature-icon">🛡️</span>
             <div class="feature-title">Без пробега по РФ</div>
-            <div class="feature-desc">Запчасти напрямую из Японии и Кореи. Оригинальное состояние.</div>
+            <div class="feature-desc">Оригинальное состояние. Запчасти сняты с автомобилей, не эксплуатировавшихся в России.</div>
         </div>
         <div class="feature-card">
             <span class="feature-icon">🔧</span>
             <div class="feature-title">Проверка на стенде</div>
-            <div class="feature-desc">Все ТНВД и форсунки проходят диагностику перед продажей.</div>
+            <div class="feature-desc">Все ТНВД, форсунки и турбины проходят профессиональную диагностику перед отправкой.</div>
         </div>
         <div class="feature-card">
             <span class="feature-icon">🚚</span>
             <div class="feature-title">Отправка ТК</div>
-            <div class="feature-desc">Доставка любой транспортной компанией в любой город России и СНГ.</div>
+            <div class="feature-desc">Доставка любой транспортной компанией (СДЭК, Деловые Линии, ПЭК) в любой город СНГ.</div>
         </div>
     </div>
 
     <!-- Физические кнопки категорий -->
     <div class="categories-section">
-        <h2 style="margin-bottom: 30px;">Категории запчастей</h2>
+        <h2 class="section-header">Категории запчастей</h2>
         <div class="cat-grid">
-            <a href="/catalog?cat=ТНВД" class="cat-btn-large">Т
+            <a href="/catalog?cat=ТНВД" class="cat-btn-large"><span>⛽ ТНВД</span></a>
+            <a href="/catalog?cat=Форсунки" class="cat-btn-large"><span>💉 Форсунки</span></a>
+            <a href="/catalog?cat=Турбина" class="cat-btn-large"><span>🌪️ Турбины</span></a>
+            <a href="/catalog?cat=АКПП" class="cat-btn-large"><span>⚙️ АКПП / МКПП</span></a>
+            <a href="/catalog?cat=Запчасти и фильтра" class="cat-btn-large"><span>🔩 Запчасти и фильтра</span></a>
+            <a href="/catalog?cat=Мелочь" class="cat-btn-large"><span>🔌 Мелочь (трубки, фишки)</span></a>
+            <a href="/catalog" class="cat-btn-large" style="background: #222;"><span>Все запчасти →</span></a>
+        </div>
+    </div>
+
+    <!-- Популярные товары (Живая витрина) -->
+    <div class="popular-section">
+        <h2 class="section-header" style="border-left: 5px solid var(--accent); padding-left: 20px;">Последние поступления</h2>
+        <div class="grid">
+            {% for p in popular_products %}
+            <div class="card">
+                <div class="card-img-wrap">
+                    {% if p.images %}
+                        {% set first_img = p.images.split(',')[0].strip() %}
+                        <img src="{{ first_img }}" loading="lazy" alt="{{ p.name }}">
+                    {% else %}
+                        <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:#444;">Нет фото</div>
+                    {% endif %}
+                </div>
+                <div class="info">
+                    <h3 class="title">{{ p.name }}</h3>
+                    <div class="meta">{{ p.brand }} {{ p.model }} | {{ p.engine }}</div>
+                    <div class="price">
+                        {% if p.price and p.price > 0 %}
+                            {{ "{:,}".format(p.price).replace(',', ' ') }} ₽
+                        {% else %}
+                            По запросу
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            
+            <!-- Если товаров мало, можно добавить заглушки или оставить как есть -->
+            {% if not popular_products %}
+            <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #555;">
+                Каталог пока пуст. Скоро здесь появятся первые позиции!
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <footer>
+        © 2026 DieselDonor. Контрактные запчасти для дизельных двигателей.<br>
+        Все права защищены. Работаем с 2020 года.
+    </footer>
+</body>
+</html>
