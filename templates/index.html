@@ -332,7 +332,8 @@
             }
         }
 
-               function showDeliveryForm() {
+        // --- НОВАЯ ФОРМА РАСЧЕТА ДОСТАВКИ ---
+        function showDeliveryForm() {
             const container = document.getElementById('chat-messages');
             const formDiv = document.createElement('div');
             formDiv.className = 'chat-form-container';
@@ -355,11 +356,11 @@
             
             container.appendChild(formDiv);
             container.scrollTop = container.scrollHeight;
-            
-            // Фокус на поле "Куда" для удобства
             setTimeout(() => document.getElementById('chat-city-to').focus(), 100);
         }
-               async function calcDelivery() {
+
+        // --- ОБНОВЛЕННЫЙ РАСЧЕТ С ОБРАБОТКОЙ ОШИБОК ---
+        async function calcDelivery() {
             const cityFrom = document.getElementById('chat-city-from').value || 'Владивосток';
             const cityTo = document.getElementById('chat-city-to').value || 'Москва';
             const weight = document.getElementById('chat-weight').value || 5;
@@ -371,8 +372,6 @@
             btn.style.opacity = '0.7';
 
             try {
-                console.log('Отправляем запрос:', {city_from: cityFrom, city_to: cityTo, weight: weight});
-                
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), 15000); // Таймаут 15 сек
                 
@@ -390,14 +389,14 @@
                 clearTimeout(timeoutId);
                 
                 if (!res.ok) {
-                    throw new Error(`HTTP error! status: ${res.status}`);
+                    throw new Error(`Сервер вернул ошибку ${res.status}`);
                 }
                 
                 const data = await res.json();
-                console.log('Ответ сервера:', data);
                 
                 let resultHtml = `✅ <b>Маршрут: ${cityFrom} → ${cityTo}</b> (${weight} кг)<br><br>`;
                 
+                // Обработка разных форматов ответа
                 if (data.price) {
                      resultHtml += `• <b>Стоимость:</b> ${data.price} ₽<br>`;
                      resultHtml += `• <b>Срок:</b> ${data.days} дн.<br>`;
@@ -408,18 +407,18 @@
                         }
                     }
                 } else {
-                    resultHtml += '❓ Неизвестный формат ответа от сервера.';
+                    resultHtml += '❓ Не удалось распознать тарифы.';
                 }
                 
                 appendMessage('manager', resultHtml);
                 
             } catch (e) {
-                console.error('Ошибка расчета:', e);
+                console.error('Calc error:', e);
                 let errorMsg = '❌ Ошибка расчета: ';
                 if (e.name === 'AbortError') {
-                    errorMsg += 'Сервер долго отвечает (возможно, спит). Попробуйте еще раз через минуту.';
+                    errorMsg += 'Сервер долго отвечает (возможно, спит). Попробуйте через минуту.';
                 } else if (e.message.includes('Failed to fetch')) {
-                    errorMsg += 'Нет связи с сервером. Проверьте интернет или попробуйте позже.';
+                    errorMsg += 'Нет связи с сервером.';
                 } else {
                     errorMsg += e.message;
                 }
@@ -430,6 +429,7 @@
                 btn.style.opacity = '1';
             }
         }
+
         async function addToCartViaChat(productId, productName) {
             try {
                 const formData = new FormData();
@@ -443,7 +443,7 @@
                     updateCartBadge(data.count);
                 }
             } catch (e) {
-                appendMessage('manager', '❌ Не удалось добавить товар. Попробуйте сделать это вручную в каталоге.');
+                appendMessage('manager', '❌ Не удалось добавить товар.');
             }
         }
 
