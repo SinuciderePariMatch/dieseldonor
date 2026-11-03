@@ -2,9 +2,9 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Чат | DieselDonor</title>
+    <title>Чат | DieselDonor Admin</title>
     <style>
-        body { background: #0f0f0f; color: #fff; font-family: sans-serif; padding: 20px; margin: 0; display: flex; flex-direction: column; height: 95vh; }
+        body { background: #0f0f0f; color: #fff; font-family: -apple-system, sans-serif; padding: 20px; margin: 0; display: flex; flex-direction: column; height: 95vh; }
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .back { color: #FFD700; text-decoration: none; font-weight: bold; }
         .chat-box { flex: 1; background: #1a1a1a; border-radius: 12px; padding: 15px; overflow-y: auto; border: 1px solid #333; display: flex; flex-direction: column; gap: 10px; }
@@ -15,6 +15,9 @@
         .input-area { display: flex; gap: 10px; margin-top: 15px; }
         input { flex: 1; padding: 12px; border-radius: 8px; border: 1px solid #333; background: #1a1a1a; color: #fff; outline: none; }
         button { padding: 12px 24px; background: #FFD700; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; color: #000; }
+        
+        /* Анимация уведомления */
+        @keyframes fadeDown { from { opacity:0; transform:translate(-50%, -20px); } to { opacity:1; transform:translate(-50%, 0); } }
     </style>
 </head>
 <body>
@@ -39,10 +42,53 @@
         <button type="submit">Отправить</button>
     </form>
 
+    <!-- ИСПРАВЛЕННЫЙ СКРИПТ (убран лишний открывающий тег) -->
     <script>
-        const sid = "{{ session_id }}";
-        const box = document.getElementById('chatBox');
-        box.scrollTop = box.scrollHeight;
+        const sessionId = "{{ session_id }}";
+        const chatWindow = document.getElementById('chatBox');
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+
+        let adminAudioCtx = null;
+        // Безопасная инициализация счетчика сообщений
+        let adminLastCount = parseInt("{{ messages|length }}") || 0;
+
+        // Звук для админа (низкий "бип")
+        function playAdminSound() {
+            if (!adminAudioCtx) adminAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = adminAudioCtx.createOscillator();
+            const gain = adminAudioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(adminAudioCtx.destination);
+            
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(329.63, adminAudioCtx.currentTime); // E4
+            gain.gain.setValueAtTime(0.1, adminAudioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, adminAudioCtx.currentTime + 0.3);
+            
+            osc.start();
+            osc.stop(adminAudioCtx.currentTime + 0.3);
+        }
+
+        // Уведомление для админа
+        function showAdminNotify(text) {
+            const old = document.getElementById('admin-notify');
+            if (old) old.remove();
+
+            const notify = document.createElement('div');
+            notify.id = 'admin-notify';
+            notify.textContent = text;
+            notify.style.cssText = `
+                position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+                background: #FFD700; color: #000; padding: 10px 24px; border-radius: 30px;
+                font-weight: bold; z-index: 9999; box-shadow: 0 5px 20px rgba(0,0,0,0.4);
+                animation: fadeDown 0.4s ease-out;
+            `;
+            document.body.appendChild(notify);
+            setTimeout(() => {
+                notify.style.opacity = '0'; notify.style.transition = 'opacity 0.3s';
+                setTimeout(() => notify.remove(), 300);
+            }, 3000);
+        }
 
         async function sendMsg(e) {
             e.preventDefault();
@@ -50,38 +96,48 @@
             const txt = inp.value.trim();
             if (!txt) return;
 
-            // Добавляем сразу в интерфейс
-            const d = document.createElement('div');
-            d.className = 'msg manager';
+            // Инициализация аудио при первой отправке
+            if (!adminAudioCtx) adminAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
             const now = new Date();
             const t = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+            
+            const d = document.createElement('div');
+            d.className = 'msg manager';
             d.innerHTML = `<span class="time">MANAGER • ${t}</span>${txt}`;
-            box.appendChild(d);
-            box.scrollTop = box.scrollHeight;
+            chatWindow.appendChild(d);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
             inp.value = '';
 
-            // Отправляем на сервер
             await fetch('/api/chat/reply', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({session_id: sid, message: txt})
+                method: 'POST', headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({session_id: sessionId, message: txt})
             });
+            
+            adminLastCount++; // Увеличиваем счетчик, чтобы не триггерить свое же сообщение
         }
 
-        // Обновление каждые 3 сек
+        // Автообновление чата каждые 3 секунды
         setInterval(async () => {
             try {
-                const r = await fetch(`/api/chat/history/${sid}`);
-                const data = await r.json();
-                if (data.length > 0) {
-                    box.innerHTML = data.map(m => {
+                const res = await fetch(`/api/chat/history/${sessionId}`);
+                const msgs = await res.json();
+                
+                if (msgs.length > adminLastCount) {
+                    // Пришло новое сообщение от КЛИЕНТА
+                    adminLastCount = msgs.length;
+                    playAdminSound();
+                    showAdminNotify("💬 Клиент написал новое сообщение!");
+                    
+                    // Перерисовываем чат
+                    chatWindow.innerHTML = msgs.map(m => {
                         const d = new Date(m.created_at);
                         const t = d.getHours().toString().padStart(2,'0') + ':' + d.getMinutes().toString().padStart(2,'0');
                         return `<div class="msg ${m.sender}"><span class="time">${m.sender.toUpperCase()} • ${t}</span>${m.message}</div>`;
                     }).join('');
-                    box.scrollTop = box.scrollHeight;
+                    chatWindow.scrollTop = chatWindow.scrollHeight;
                 }
-            } catch(e) {}
+            } catch (e) {}
         }, 3000);
     </script>
 </body>

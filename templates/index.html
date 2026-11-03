@@ -6,6 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <title>DieselDonor | Контрактные ТНВД</title>
     <style>
+        @keyframes pulse { 
+    0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7); } 
+    70% { box-shadow: 0 0 0 15px rgba(255, 215, 0, 0); } 
+    100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); } 
+}
         :root {
             --bg-main: #000000;
             --bg-card: rgba(28, 28, 30, 0.6);
@@ -490,21 +495,105 @@
             }
         }
 
-        // Автопроверка новых ответов от менеджера каждые 5 сек
+               <!-- ... предыдущий код скрипта ... -->
+
+        // Глобальные переменные для уведомлений клиента
+        let clientAudioCtx = null;
+        let lastKnownMsgCount = 0;
+
+        // Функция воспроизведения короткого звука (без внешних файлов)
+        function playClientSound() {
+            if (!clientAudioCtx) clientAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = clientAudioCtx.createOscillator();
+            const gain = clientAudioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(clientAudioCtx.destination);
+            
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(587.33, clientAudioCtx.currentTime); // Нота D5
+            osc.frequency.exponentialRampToValueAtTime(880, clientAudioCtx.currentTime + 0.1); // Переход на A5
+            
+            gain.gain.setValueAtTime(0.1, clientAudioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, clientAudioCtx.currentTime + 0.4);
+            
+            osc.start();
+            osc.stop(clientAudioCtx.currentTime + 0.4);
+        }
+
+        // Функция показа уведомления "Вам ответили!"
+        function showClientNotification(text) {
+            // Удаляем старое уведомление, если есть
+            const old = document.getElementById('client-notify');
+            if (old) old.remove();
+
+            const notify = document.createElement('div');
+            notify.id = 'client-notify';
+            notify.innerHTML = `🔔 <b>${text}</b>`;
+            notify.style.cssText = `
+                position: fixed; top: 80px; right: 30px; z-index: 10000;
+                background: var(--accent); color: #000; padding: 12px 24px;
+                border-radius: 50px; font-weight: 700; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+                animation: slideInRight 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                font-family: -apple-system, sans-serif;
+            `;
+            document.body.appendChild(notify);
+
+            // Добавляем анимацию появления
+            const style = document.createElement('style');
+            style.textContent = `@keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }`;
+            document.head.appendChild(style);
+
+            // Убираем через 4 секунды
+            setTimeout(() => {
+                notify.style.transition = 'all 0.3s';
+                notify.style.opacity = '0';
+                notify.style.transform = 'translateX(100%)';
+                setTimeout(() => notify.remove(), 300);
+            }, 4000);
+        }
+
+        // Автопроверка новых ответов от менеджера каждые 3 сек
         setInterval(async () => {
             try {
                 const res = await fetch(`/api/chat/history/${CHAT_SESSION_ID}`);
                 const msgs = await res.json();
-                const lastMsg = msgs[msgs.length - 1];
-                if (lastMsg && lastMsg.sender === 'manager') {
-                    const container = document.getElementById('chat-messages');
-                    if (!container.innerHTML.includes(lastMsg.message.substring(0, 20))) {
-                        appendMessage('manager', lastMsg.message);
+                
+                if (msgs.length > 0) {
+                    const lastMsg = msgs[msgs.length - 1];
+                    
+                    // Проверяем, новое ли это сообщение от менеджера
+                    if (lastMsg.sender === 'manager' && msgs.length > lastKnownMsgCount) {
+                        lastKnownMsgCount = msgs.length;
+                        
+                        // Показываем уведомление ТОЛЬКО если окно чата закрыто или свернуто
+                        const chatWin = document.getElementById('chat-window');
+                        if (chatWin.style.display === 'none' || chatWin.style.display === '') {
+                            playClientSound();
+                            showClientNotification("Менеджер ответил вам!");
+                            
+                            // Мигаем кнопкой чата
+                            const btn = document.querySelector('#chat-widget button');
+                            btn.style.animation = 'pulse 1s infinite';
+                            setTimeout(() => btn.style.animation = '', 5000);
+                        } else {
+                            // Если чат открыт - просто добавляем сообщение
+                            appendMessage('manager', lastMsg.message);
+                        }
                     }
                 }
             } catch (e) {}
-        }, 5000);
+        }, 3000);
 
+        // Активируем аудио контекст при первом клике на чат (требование браузеров)
+        const origToggle = toggleChat;
+        toggleChat = function() {
+            if (!clientAudioCtx) {
+                clientAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            origToggle();
+        };
+
+        // ... остальной код скрипта (sendMessage, calcDelivery и т.д.) ...
         // --- ФОРМА РАСЧЕТА ДОСТАВКИ ---
         function showDeliveryForm() {
             const container = document.getElementById('chat-messages');
