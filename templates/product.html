@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ product.name }} | DieselDonor</title>
+    <style>
+        :root { --bg-main: #0f0f0f; --bg-card: #1a1a1a; --accent: #FFD700; --text-main: #ffffff; --border: #333333; }
+        body { margin: 0; font-family: 'Inter', system-ui, sans-serif; background: var(--bg-main); color: var(--text-main); padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+        
+        .gallery-main { width: 100%; height: 500px; background: var(--bg-card); border-radius: 20px; overflow: hidden; margin-bottom: 15px; border: 1px solid var(--border); }
+        .gallery-main img { width: 100%; height: 100%; object-fit: contain; }
+        .gallery-thumbs { display: flex; gap: 10px; overflow-x: auto; }
+        .thumb { width: 80px; height: 80px; border-radius: 12px; border: 2px solid transparent; cursor: pointer; opacity: 0.6; transition: all 0.3s; }
+        .thumb.active, .thumb:hover { border-color: var(--accent); opacity: 1; }
+        
+        .product-info h1 { font-size: 2rem; margin: 0 0 15px; }
+        .price-tag { font-size: 2.5rem; color: var(--accent); font-weight: 800; margin: 20px 0; }
+        .specs { background: var(--bg-card); padding: 20px; border-radius: 16px; border: 1px solid var(--border); margin: 20px 0; }
+        .spec-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); }
+        .spec-row:last-child { border-bottom: none; }
+        .desc { line-height: 1.8; color: #ccc; margin: 20px 0; white-space: pre-line; }
+        
+        .add-to-cart-form { display: flex; gap: 15px; margin-top: 30px; }
+        .qty-input { width: 80px; padding: 15px; border-radius: 12px; border: 1px solid var(--border); background: var(--bg-card); color: #fff; font-size: 1.2rem; text-align: center; }
+        .btn-buy { flex: 1; padding: 15px; border-radius: 12px; border: none; background: var(--accent); color: #000; font-weight: 800; font-size: 1.2rem; cursor: pointer; transition: transform 0.2s; }
+        .btn-buy:hover { transform: scale(1.02); }
+
+        @media (max-width: 768px) { .container { grid-template-columns: 1fr; } .gallery-main { height: 300px; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="gallery">
+            <div class="gallery-main">
+                {% set imgs = product.images.split(',') if product.images else [] %}
+                <img id="mainImg" src="{{ imgs[0].strip() if imgs else '/static/no-photo.png' }}" alt="{{ product.name }}">
+            </div>
+            <div class="gallery-thumbs">
+                {% for img in imgs %}
+                <img class="thumb {% if loop.first %}active{% endif %}" src="{{ img.strip() }}" onclick="document.getElementById('mainImg').src=this.src; document.querySelectorAll('.thumb').forEach(t=>t.classList.remove('active')); this.classList.add('active');">
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="product-info">
+            <h1>{{ product.name }}</h1>
+            <div class="price-tag">{% if product.price and product.price > 0 %}{{ "{:,}".format(product.price).replace(',', ' ') }} ₽{% else %}По запросу{% endif %}</div>
+            
+            <div class="specs">
+                <div class="spec-row"><span>Марка</span><strong>{{ product.brand or '-' }}</strong></div>
+                <div class="spec-row"><span>Модель</span><strong>{{ product.model or '-' }}</strong></div>
+                <div class="spec-row"><span>Двигатель</span><strong>{{ product.engine or '-' }}</strong></div>
+                <div class="spec-row"><span>Кузов</span><strong>{{ product.body_type or '-' }}</strong></div>
+                <div class="spec-row"><span>Номер производителя</span><strong>{{ product.part_number or '-' }}</strong></div>
+                <div class="spec-row"><span>Кросс-номера</span><strong>{{ product.cross_numbers or '-' }}</strong></div>
+            </div>
+
+            <div class="desc">{{ product.description }}</div>
+
+            <form action="/cart/add" method="POST" class="add-to-cart-form">
+                <input type="hidden" name="product_id" value="{{ product.id }}">
+                <input type="number" name="qty" value="1" min="1" class="qty-input">
+                <button type="submit" class="btn-buy">🛒 Добавить в корзину</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
