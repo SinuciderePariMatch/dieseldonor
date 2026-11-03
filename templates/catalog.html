@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Каталог запчастей | DieselDonor</title>
+    <style>
+        body { margin: 0; font-family: 'Inter', sans-serif; background: #121212; color: #fff; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        
+        /* Поиск */
+        .search-box { width: 100%; padding: 16px; border-radius: 12px; border: 1px solid #333; background: #1e1e1e; color: #fff; font-size: 1rem; margin-bottom: 20px; outline: none; box-sizing: border-box; }
+        .search-box:focus { border-color: #FFD700; }
+
+        /* Физические кнопки категорий */
+        .categories { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 30px; scrollbar-width: none; }
+        .cat-btn { white-space: nowrap; padding: 10px 20px; border-radius: 50px; background: #2a2a2a; border: 1px solid #444; color: #ccc; cursor: pointer; transition: all 0.3s ease; font-size: 0.9rem; }
+        .cat-btn.active, .cat-btn:hover { background: #FFD700; color: #000; border-color: #FFD700; }
+
+        /* Сетка товаров с плавной анимацией */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+        .card { background: #1e1e1e; border-radius: 16px; overflow: hidden; border: 1px solid #333; transition: opacity 0.4s ease, transform 0.4s ease; opacity: 1; transform: scale(1); }
+        .card.hidden { opacity: 0; transform: scale(0.95); pointer-events: none; position: absolute; visibility: hidden; }
+        
+        .card img { width: 100%; height: 200px; object-fit: cover; background: #2a2a2a; }
+        .info { padding: 16px; }
+        .price { color: #FFD700; font-size: 1.2rem; font-weight: bold; margin-top: 8px; }
+        .title { font-size: 1rem; margin: 0; line-height: 1.4; }
+        .meta { color: #777; font-size: 0.85rem; margin-top: 6px; }
+
+        @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <input type="text" id="search" class="search-box" placeholder="Поиск по названию, номеру или марке...">
+        
+        <div class="categories" id="cats">
+            <button class="cat-btn active" data-cat="all">Все</button>
+            <button class="cat-btn" data-cat="ТНВД">ТНВД</button>
+            <button class="cat-btn" data-cat="Форсунки">Форсунки</button>
+            <button class="cat-btn" data-cat="Турбина">Турбины</button>
+            <button class="cat-btn" data-cat="АКПП">АКПП / МКПП</button>
+            <button class="cat-btn" data-cat="Мост">Мосты / Редукторы</button>
+        </div>
+
+        <div class="grid" id="grid">
+            {% for p in products %}
+            <div class="card" data-name="{{ p.name|lower }}" data-cat="{{ p.category }}">
+                <img src="{{ p.images.split(',')[0].strip() if p.images else '/static/placeholder.jpg' }}" loading="lazy" alt="{{ p.name }}">
+                <div class="info">
+                    <h3 class="title">{{ p.name }}</h3>
+                    <div class="meta">{{ p.brand }} {{ p.model }} | {{ p.part_number }}</div>
+                    <div class="price">{% if p.price > 0 %}{{ "{:,}".format(p.price).replace(',', ' ') }} ₽{% else %}По запросу{% endif %}</div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script>
+        const search = document.getElementById('search');
+        const cards = document.querySelectorAll('.card');
+        const catBtns = document.querySelectorAll('.cat-btn');
+        let currentCat = 'all';
+
+        function filter() {
+            const query = search.value.toLowerCase();
+            cards.forEach(card => {
+                const matchText = card.dataset.name.includes(query);
+                const matchCat = currentCat === 'all' || card.dataset.cat === currentCat;
+                
+                if (matchText && matchCat) {
+                    card.classList.remove('hidden');
+                    card.style.position = 'relative';
+                    card.style.visibility = 'visible';
+                } else {
+                    card.classList.add('hidden');
+                    // Небольшая задержка перед скрытием из потока для плавности
+                    setTimeout(() => {
+                        if(card.classList.contains('hidden')) {
+                            card.style.position = 'absolute';
+                            card.style.visibility = 'hidden';
+                        }
+                    }, 400);
+                }
+            });
+        }
+
+        search.addEventListener('input', filter);
+        
+        catBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                catBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentCat = btn.dataset.cat;
+                filter();
+            });
+        });
+    </script>
+</body>
+</html>
