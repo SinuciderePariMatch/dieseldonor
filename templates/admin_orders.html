@@ -1,0 +1,104 @@
+{\rtf1}<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Заказы | DieselDonor Admin</title>
+    <style>
+        body { background: #0f0f0f; color: #fff; font-family: -apple-system, sans-serif; padding: 40px; }
+        h1 { border-left: 4px solid #FFD700; padding-left: 20px; margin-bottom: 30px; }
+        .back-link { color: #FFD700; text-decoration: none; display: inline-block; margin-bottom: 20px; }
+        
+        .order-card { 
+            background: #1a1a1a; border: 1px solid #333; border-radius: 16px; 
+            padding: 25px; margin-bottom: 20px; transition: all 0.3s;
+        }
+        .order-card:hover { border-color: #FFD700; }
+        
+        .order-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 15px; }
+        .order-id { font-size: 1.2rem; font-weight: bold; color: #FFD700; }
+        .order-date { color: #666; font-size: 0.9rem; }
+        
+        .order-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .info-label { color: #888; font-size: 0.8rem; margin-bottom: 4px; }
+        .info-value { font-size: 1rem; }
+        
+        .items-list { background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; margin-top: 15px; }
+        .item-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .item-row:last-child { border-bottom: none; }
+        
+        .total-price { font-size: 1.5rem; font-weight: bold; color: #FFD700; margin-top: 20px; text-align: right; }
+        .status-badge { background: #333; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; }
+    </style>
+</head>
+<body>
+    <a href="/admin" class="back-link">← Назад в админку</a>
+    <h1>📦 Список заказов</h1>
+    
+    {% if orders %}
+        {% for order in orders %}
+        <div class="order-card">
+            <div class="order-header">
+                <div>
+                    <span class="order-id">Заказ #{{ order.id }}</span>
+                    <span class="status-badge" style="margin-left: 10px;">{{ order.status }}</span>
+                </div>
+                <div class="order-date">{{ order.created_at.strftime('%d.%m.%Y %H:%M') }}</div>
+            </div>
+            
+            <div class="order-grid">
+                <div>
+                    <div class="info-label">Клиент</div>
+                    <div class="info-value">{{ order.client_name }}</div>
+                </div>
+                <div>
+                    <div class="info-label">Телефон</div>
+                    <div class="info-value"><a href="tel:{{ order.client_phone }}" style="color:#fff; text-decoration:none;">{{ order.client_phone }}</a></div>
+                </div>
+                <div>
+                    <div class="info-label">Доставка</div>
+                    <div class="info-value">
+                        {% if order.delivery_type == 'tk' %}
+                            🚚 {{ order.tk_name }} ({{ order.city_from }} → {{ order.city_to }})
+                        {% else %}
+                            🏢 Самовывоз
+                        {% endif %}
+                    </div>
+                </div>
+                <div>
+                    <div class="info-label">Оплата</div>
+                    <div class="info-value">
+                        {% if order.payment_method == 'card' %}💳 Картой
+                        {% elif order.payment_method == 'sbp' %}📱 СБП / QR
+                        {% else %}💵 Наличные{% endif %}
+                    </div>
+                </div>
+            </div>
+
+            {% if order.comment %}
+            <div style="margin-bottom: 15px; color: #aaa; font-style: italic;">
+                💬 Комментарий: {{ order.comment }}
+            </div>
+            {% endif %}
+
+            <div class="items-list">
+                <div class="info-label" style="margin-bottom: 10px;">СОСТАВ ЗАКАЗА:</div>
+                {% set items = order.items_json | from_json %}
+                {% for item in items %}
+                <div class="item-row">
+                    <span>{{ item.name }} × {{ item.qty }}</span>
+                    <span>{{ item.total }} ₽</span>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="total-price">Итого: {{ order.total_price }} ₽</div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div style="text-align:center; padding:60px; color:#666; border: 2px dashed #333; border-radius: 16px;">
+            <h2>Пока нет заказов</h2>
+            <p>Когда клиент оформит покупку на сайте, она появится здесь.</p>
+        </div>
+    {% endif %}
+</body>
+</html>
