@@ -332,48 +332,84 @@
             }
         }
 
-        function showDeliveryForm() {
+               function showDeliveryForm() {
             const container = document.getElementById('chat-messages');
             const formDiv = document.createElement('div');
             formDiv.className = 'chat-form-container';
-            formDiv.style.cssText = 'align-self:flex-start; background:rgba(255,255,255,0.05); padding:16px; border-radius:18px; max-width:90%; animation:slideUp 0.3s;';
+            formDiv.style.cssText = 'align-self:flex-start; background:rgba(255,255,255,0.05); padding:16px; border-radius:18px; max-width:90%; animation:slideUp 0.3s; border: 1px solid rgba(255,255,255,0.1);';
+            
             formDiv.innerHTML = `
-                <div style="font-size:0.85rem; color:#86868b; margin-bottom:10px;">🚚 Расчет доставки</div>
-                <input type="text" id="chat-city" placeholder="Ваш город" style="width:100%; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:10px; color:#fff; margin-bottom:8px; outline:none;">
-                <input type="number" id="chat-weight" placeholder="Вес (кг)" value="5" style="width:100%; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:10px; color:#fff; margin-bottom:10px; outline:none;">
-                <button onclick="calcDelivery()" style="width:100%; background:var(--accent); border:none; border-radius:12px; padding:10px; font-weight:700; cursor:pointer;">Рассчитать</button>
+                <div style="font-size:0.85rem; color:#FFD700; margin-bottom:12px; font-weight:600;">🚚 Расчет стоимости доставки</div>
+                
+                <label style="display:block; font-size:0.75rem; color:#86868b; margin-bottom:4px;">Откуда (склад):</label>
+                <input type="text" id="chat-city-from" value="Владивосток" style="width:100%; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.1); border-radius:10px; padding:10px 12px; color:#fff; margin-bottom:12px; outline:none; font-size:0.9rem;">
+                
+                <label style="display:block; font-size:0.75rem; color:#86868b; margin-bottom:4px;">Куда (город получателя):</label>
+                <input type="text" id="chat-city-to" placeholder="Например: Москва" style="width:100%; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.1); border-radius:10px; padding:10px 12px; color:#fff; margin-bottom:12px; outline:none; font-size:0.9rem;">
+                
+                <label style="display:block; font-size:0.75rem; color:#86868b; margin-bottom:4px;">Примерный вес (кг):</label>
+                <input type="number" id="chat-weight" value="5" min="1" style="width:100%; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.1); border-radius:10px; padding:10px 12px; color:#fff; margin-bottom:16px; outline:none; font-size:0.9rem;">
+                
+                <button onclick="calcDelivery()" style="width:100%; background:var(--accent); border:none; border-radius:12px; padding:12px; font-weight:700; color:#000; cursor:pointer; transition:opacity 0.2s;">Рассчитать стоимость</button>
             `;
+            
             container.appendChild(formDiv);
             container.scrollTop = container.scrollHeight;
+            
+            // Фокус на поле "Куда" для удобства
+            setTimeout(() => document.getElementById('chat-city-to').focus(), 100);
         }
-
         async function calcDelivery() {
-            const city = document.getElementById('chat-city').value || 'Москва';
+            const cityFrom = document.getElementById('chat-city-from').value || 'Владивосток';
+            const cityTo = document.getElementById('chat-city-to').value || 'Москва';
             const weight = document.getElementById('chat-weight').value || 5;
+            
             const btn = event.target;
-            btn.textContent = 'Считаем...';
+            const originalText = btn.textContent;
+            btn.textContent = '⏳ Считаем...';
             btn.disabled = true;
+            btn.style.opacity = '0.7';
 
             try {
                 const res = await fetch('/api/calculate-delivery', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({city, weight})
+                    body: JSON.stringify({
+                        city_from: cityFrom, 
+                        city_to: cityTo, 
+                        weight: parseFloat(weight)
+                    })
                 });
                 const data = await res.json();
                 
-                let resultHtml = `✅ <b>Доставка в г. ${city} (${weight} кг):</b><br><br>`;
-                for (const [tk, info] of Object.entries(data)) {
-                    resultHtml += `• <b>${tk}</b>: ${info.price} ₽ <span style="color:#86868b">(${info.days} дн.)</span><br>`;
+                let resultHtml = `✅ <b>Маршрут: ${cityFrom} → ${cityTo}</b> (${weight} кг)<br><br>`;
+                
+                // Если бэкенд возвращает объект с ТК (как в прошлом коде)
+                if (data.price) {
+                     resultHtml += `• <b>Средняя стоимость:</b> ${data.price} ₽<br>`;
+                     resultHtml += `• <b>Срок:</b> ${data.days} дн.<br>`;
+                } else {
+                    // Если бэкенд возвращает список ТК
+                    for (const [tk, info] of Object.entries(data)) {
+                        if (typeof info === 'object' && info.price) {
+                            resultHtml += `• <b>${tk}</b>: ${info.price} ₽ <span style="color:#86868b">(${info.days} дн.)</span><br>`;
+                        }
+                    }
                 }
+                
                 appendMessage('manager', resultHtml);
+                
+                // Удаляем форму после расчета, чтобы не загромождать чат
+                formDiv.remove(); 
+                
             } catch (e) {
-                appendMessage('manager', '❌ Ошибка расчета. Попробуйте позже или напишите менеджеру в WhatsApp.');
+                appendMessage('manager', '❌ Не удалось рассчитать доставку. Попробуйте позже или уточните у менеджера.');
             } finally {
-                btn.remove(); // Remove form after calculation
+                btn.textContent = originalText;
+                btn.disabled = false;
+                btn.style.opacity = '1';
             }
         }
-
         async function addToCartViaChat(productId, productName) {
             try {
                 const formData = new FormData();

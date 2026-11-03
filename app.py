@@ -325,15 +325,12 @@ def delete_product(product_id):
 
 @app.route("/api/calculate-delivery", methods=["POST"])
 def api_calculate_delivery():
-    """Расчет стоимости доставки с учетом веса товаров из корзины"""
     data = request.get_json()
-    city = data.get("city", "Москва")
-    tk_name = data.get("tk_name", "СДЭК")
+    city_from = data.get("city_from", "Владивосток") # Теперь ловим и это поле
+    city_to = data.get("city_to", "Москва")
+    weight = float(data.get("weight", 5))
     
-    # Получаем вес из корзины клиента (через session_id или передаем явно)
-    # Для простоты берем вес из запроса или считаем по умолчанию
-    cart_weight = float(data.get("weight", 5)) 
-    
+    # ... остальная логика расчета ...
     # Тарифы (можно вынести в конфиг или БД)
     rates = {
         "СДЭК": {"base": 200, "per_kg": 90, "days": "2-4"},
