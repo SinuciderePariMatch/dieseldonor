@@ -26,106 +26,140 @@
             overflow-x: hidden;
         }
 
-        /* Navigation Bar (Glassmorphism) */
+        /* --- NAVIGATION --- */
         nav {
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: var(--blur);
-            -webkit-backdrop-filter: var(--blur);
-            border-bottom: 1px solid var(--border);
-            padding: 0 40px;
-            height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            position: sticky; top: 0; z-index: 1000;
+            background: rgba(0, 0, 0, 0.7); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
+            border-bottom: 1px solid var(--border); padding: 0 40px; height: 60px;
+            display: flex; align-items: center; justify-content: space-between;
         }
-
         .nav-logo { font-size: 1.2rem; font-weight: 700; letter-spacing: -0.5px; text-decoration: none; color: #fff; }
         .nav-logo span { color: var(--accent); }
-        
         .nav-links { display: flex; gap: 30px; font-size: 0.8rem; color: #e8e8ed; }
         .nav-links a { text-decoration: none; color: inherit; transition: color 0.3s; opacity: 0.8; }
         .nav-links a:hover { opacity: 1; color: var(--accent); }
-
         .nav-cart { 
-            background: rgba(255,255,255,0.1); 
-            padding: 6px 16px; 
-            border-radius: 20px; 
-            font-size: 0.8rem; 
-            text-decoration: none; 
-            color: #fff;
-            display: flex; align-items: center; gap: 6px;
-            transition: background 0.3s;
+            background: rgba(255,255,255,0.1); padding: 6px 16px; border-radius: 20px; 
+            font-size: 0.8rem; text-decoration: none; color: #fff; display: flex; align-items: center; gap: 6px; transition: background 0.3s; 
         }
         .nav-cart:hover { background: rgba(255,255,255,0.2); }
 
-        /* Hero Section */
+        /* --- HERO SECTION --- */
         .hero {
-            position: relative;
-            height: 90vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 0 20px;
+            position: relative; height: 90vh; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; text-align: center; padding: 0 20px;
             background: url('https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?q=80&w=2574&auto=format&fit=crop') no-repeat center center/cover;
         }
-        .hero::before {
-            content: ''; position: absolute; inset: 0;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.9));
-        }
-        .hero-content { position: relative; z-index: 2; max-width: 800px; animation: fadeUp 1s ease-out; }
+        .hero::before { content: ''; position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.9)); }
+        .hero-content { position: relative; z-index: 2; max-width: 800px; }
         
         h1 { font-size: clamp(3rem, 6vw, 5rem); font-weight: 700; letter-spacing: -2px; margin: 0 0 20px; line-height: 1.1; }
         .hero-sub { font-size: 1.5rem; color: var(--text-sec); margin-bottom: 40px; font-weight: 400; }
         
         .search-wrapper {
-            width: 100%; max-width: 600px; margin: 0 auto;
-            background: rgba(255,255,255,0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 50px;
-            padding: 6px;
-            display: flex;
-            border: 1px solid rgba(255,255,255,0.1);
-            transition: all 0.3s;
+            width: 100%; max-width: 600px; margin: 0 auto; background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px); border-radius: 50px; padding: 6px; display: flex;
+            border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s;
         }
         .search-wrapper:focus-within { background: rgba(255,255,255,0.15); border-color: var(--accent); }
-        .search-input {
-            flex: 1; background: transparent; border: none; outline: none;
-            color: #fff; padding: 15px 25px; font-size: 1.1rem;
-        }
+        .search-input { flex: 1; background: transparent; border: none; outline: none; color: #fff; padding: 15px 25px; font-size: 1.1rem; }
         .search-btn {
-            background: var(--accent); color: #000; border: none;
-            border-radius: 50px; padding: 0 35px; font-weight: 600; cursor: pointer;
-            transition: transform 0.2s;
+            background: var(--accent); color: #000; border: none; border-radius: 50px;
+            padding: 0 35px; font-weight: 600; cursor: pointer; transition: transform 0.2s;
         }
         .search-btn:hover { transform: scale(1.05); }
 
-        /* Bento Grid Layout (Apple Style) */
+        /* --- BENTO GRID & SECTIONS --- */
         .bento-section { padding: 100px 40px; max-width: 1200px; margin: 0 auto; }
         .section-head { font-size: 3rem; font-weight: 700; margin-bottom: 60px; text-align: center; letter-spacing: -1px; }
         
-        .bento-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 24px;
-        }
-        
+        .bento-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
         .bento-card {
-            background: var(--bg-card);
-            border-radius: 30px;
-            padding: 40px;
-            position: relative;
-            overflow: hidden;
-            transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
-            border: 1px solid var(--border);
-            display: flex; flex-direction: column; justify-content: space-between;
-            min-height: 350px;
+            background: var(--bg-card); border-radius: 30px; padding: 40px; position: relative;Евгений, держи **полный, готовый к копированию код** `templates/index.html`.
+
+Я уже внедрил в него анимации в стиле `emilkowalski/skills` (плавное появление снизу с размытием), расставил классы `.reveal` и задержки `.reveal-delay` для всех блоков. Тебе не нужно ничего искать или добавлять вручную — просто скопируй этот файл целиком.
+
+```html
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DieselDonor | Контрактные ТНВД</title>
+    <style>
+        :root {
+            --bg-main: #000000;
+            --bg-card: rgba(28, 28, 30, 0.6);
+            --accent: #FFD700;
+            --text-main: #f5f5f7;
+            --text-sec: #86868b;
+            --border: rgba(255, 255, 255, 0.1);
+            --blur: blur(20px);
         }
-        .bento-card:hover { transform: scale(1.02); }
+
+        * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+        
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: var(--bg-main);
+            color: var(--text-main);
+            line-height: 1.5;
+            overflow-x: hidden;
+        }
+
+        /* --- NAVIGATION --- */
+        nav {
+            position: sticky; top: 0; z-index: 1000;
+            background: rgba(0, 0, 0, 0.7); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
+            border-bottom: 1px solid var(--border); padding: 0 40px; height: 60px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .nav-logo { font-size: 1.2rem; font-weight: 700; letter-spacing: -0.5px; text-decoration: none; color: #fff; }
+        .nav-logo span { color: var(--accent); }
+        .nav-links { display: flex; gap: 30px; font-size: 0.8rem; color: #e8e8ed; }
+        .nav-links a { text-decoration: none; color: inherit; transition: color 0.3s; opacity: 0.8; }
+        .nav-links a:hover { opacity: 1; color: var(--accent); }
+        .nav-cart { 
+            background: rgba(255,255,255,0.1); padding: 6px 16px; border-radius: 20px; 
+            font-size: 0.8rem; text-decoration: none; color: #fff; display: flex; align-items: center; gap: 6px; transition: background 0.3s; 
+        }
+        .nav-cart:hover { background: rgba(255,255,255,0.2); }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            position: relative; height: 90vh; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; text-align: center; padding: 0 20px;
+            background: url('https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?q=80&w=2574&auto=format&fit=crop') no-repeat center center/cover;
+        }
+        .hero::before { content: ''; position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.9)); }
+        .hero-content { position: relative; z-index: 2; max-width: 800px; }
+        
+        h1 { font-size: clamp(3rem, 6vw, 5rem); font-weight: 700; letter-spacing: -2px; margin: 0 0 20px; line-height: 1.1; }
+        .hero-sub { font-size: 1.5rem; color: var(--text-sec); margin-bottom: 40px; font-weight: 400; }
+        
+        .search-wrapper {
+            width: 100%; max-width: 600px; margin: 0 auto; background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px); border-radius: 50px; padding: 6px; display: flex;
+            border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s;
+        }
+        .search-wrapper:focus-within { background: rgba(255,255,255,0.15); border-color: var(--accent); }
+        .search-input { flex: 1; background: transparent; border: none; outline: none; color: #fff; padding: 15px 25px; font-size: 1.1rem; }
+        .search-btn {
+            background: var(--accent); color: #000; border: none; border-radius: 50px;
+            padding: 0 35px; font-weight: 600; cursor: pointer; transition: transform 0.2s;
+        }
+        .search-btn:hover { transform: scale(1.05); }
+
+        /* --- BENTO GRID & SECTIONS --- */
+        .bento-section { padding: 100px 40px; max-width: 1200px; margin: 0 auto; }
+        .section-head { font-size: 3rem; font-weight: 700; margin-bottom: 60px; text-align: center; letter-spacing: -1px; }
+        
+        .bento-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+        .bento-card {
+            background: var(--bg-card); border-radius: 30px; padding: 40px; position: relative;
+            overflow: hidden; border: 1px solid var(--border); display: flex; flex-direction: column; justify-content: space-between; min-height: 350px;
+        }
         .bento-card.large { grid-column: span 2; background: linear-gradient(135deg, #1c1c1e 0%, #2c2c2e 100%); }
         .bento-card.tall { grid-row: span 2; }
         
@@ -133,20 +167,14 @@
         .card-title { font-size: 2rem; font-weight: 700; margin: 0 0 15px; letter-spacing: -0.5px; }
         .card-desc { color: var(--text-sec); font-size: 1.1rem; line-height: 1.6; margin: 0; }
         .card-link { margin-top: 20px; color: var(--accent); text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 5px; }
-        
-        /* Products Carousel */
-        .products-scroll {
-            display: flex; gap: 20px; overflow-x: auto; padding: 20px 40px 60px;
-            scrollbar-width: none; -ms-overflow-style: none;
-        }
+
+        /* --- PRODUCTS SCROLL --- */
+        .products-scroll { display: flex; gap: 20px; overflow-x: auto; padding: 20px 40px 60px; scrollbar-width: none; }
         .products-scroll::-webkit-scrollbar { display: none; }
-        
         .product-card {
             min-width: 300px; background: var(--bg-card); border-radius: 24px;
             overflow: hidden; border: 1px solid var(--border); flex-shrink: 0;
-            transition: transform 0.3s;
         }
-        .product-card:hover { transform: translateY(-10px); }
         .p-img { height: 250px; background: #111; overflow: hidden; }
         .p-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
         .product-card:hover .p-img img { transform: scale(1.1); }
@@ -155,18 +183,21 @@
         .p-meta { color: var(--text-sec); font-size: 0.9rem; margin-bottom: 15px; }
         .p-price { color: var(--accent); font-size: 1.3rem; font-weight: 700; }
 
-        /* Map & Footer */
-        .map-wrap { border-radius: 30px; overflow: hidden; height: 500px; margin: 40px; border: 1px solid var(--border); }
+        /* --- MAP & FOOTER --- */
+        .map-wrap { border-radius: 30px; overflow: hidden; height: 500px; border: 1px solid var(--border); }
         footer { text-align: center; padding: 60px 20px; color: var(--text-sec); font-size: 0.9rem; border-top: 1px solid var(--border); }
 
-        @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-        
+        /* --- ANIMATIONS (Skills Style) --- */
+        .reveal { opacity: 0; transform: translateY(40px); filter: blur(10px); transition: all 1s cubic-bezier(0.16, 1, 0.3, 1); }
+        .reveal.active { opacity: 1; transform: translateY(0); filter: blur(0); }
+        .reveal-delay-1 { transition-delay: 0.1s; }
+        .reveal-delay-2 { transition-delay: 0.2s; }
+        .reveal-delay-3 { transition-delay: 0.3s; }
+
         @media (max-width: 900px) {
             .bento-grid { grid-template-columns: 1fr; }
             .bento-card.large, .bento-card.tall { grid-column: span 1; grid-row: span 1; }
-            h1 { font-size: 3rem; }
-            nav { padding: 0 20px; }
-            .nav-links { display: none; }
+            h1 { font-size: 3rem; } nav { padding: 0 20px; } .nav-links { display: none; }
         }
     </style>
 </head>
@@ -184,12 +215,11 @@
         <a href="/cart" class="nav-cart">🛒 Корзина <span style="background:var(--accent); color:#000; border-radius:10px; padding:2px 6px; font-size:0.7rem;">{{ session.get('cart', [])|length }}</span></a>
     </nav>
 
-    <!-- Hero -->
+    <!-- Hero Section -->
     <div class="hero">
         <div class="hero-content reveal">
             <h1>ТНВД. Без компромиссов.</h1>
             <p class="hero-sub">Оригинальные контрактные запчасти из Японии. Честная цена без наценок за стенд.</p>
-            
             <form action="/catalog" method="GET" class="search-wrapper">
                 <input type="text" name="q" class="search-input" placeholder="Поиск по номеру, модели или двигателю..." value="{{ search_query or '' }}">
                 <button type="submit" class="search-btn">Найти</button>
@@ -199,9 +229,9 @@
 
     <!-- Bento Grid Info -->
     <div class="bento-section" id="about">
-        <h2 class="section-head">Почему DieselDonor?</h2>
+        <h2 class="section-head reveal">Почему DieselDonor?</h2>
         <div class="bento-grid">
-            <div class="bento-card reveal reveal-delay-1"></div>
+            <div class="bento-card large reveal">
                 <div>
                     <div class="card-label">Честный подход</div>
                     <h3 class="card-title">Без восстановления.<br>Без стенда.</h3>
@@ -210,13 +240,13 @@
                 <a href="https://www.farpost.ru/user/DieseLDonor/" target="_blank" class="card-link">Смотреть на Farpost →</a>
             </div>
             
-            <div class="bento-card">
+            <div class="bento-card reveal reveal-delay-1">
                 <div class="card-label">Логистика</div>
                 <h3 class="card-title">Отправка по всей РФ</h3>
                 <p class="card-desc">Работаем с СДЭК, ПЭК, Деловыми Линиями. Быстрая доставка в любой регион.</p>
             </div>
 
-            <div class="bento-card tall">
+            <div class="bento-card tall reveal reveal-delay-2">
                 <div class="card-label">Ассортимент</div>
                 <h3 class="card-title">В наличии</h3>
                 <ul style="list-style:none; padding:0; margin:20px 0; color:var(--text-sec); line-height:2;">
@@ -227,7 +257,7 @@
                 </ul>
             </div>
 
-            <div class="bento-card">
+            <div class="bento-card reveal reveal-delay-3">
                 <div class="card-label">Гарантия</div>
                 <h3 class="card-title">Прозрачные условия</h3>
                 <p class="card-desc">Насосы б/у, без тест-плана. Мы предупреждаем об этом сразу. Никаких скрытых условий.</p>
@@ -237,12 +267,12 @@
 
     <!-- Products Scroll -->
     <div style="padding: 0 40px;">
-        <h2 class="section-head" style="text-align:left; margin-bottom:30px;">Новые поступления</h2>
+        <h2 class="section-head reveal" style="text-align:left; margin-bottom:30px;">Новые поступления</h2>
     </div>
     <div class="products-scroll">
         {% for p in popular_products %}
         <a href="/product/{{ p.id }}" style="text-decoration:none; color:inherit;">
-            <div class="product-card reveal">
+            <div class="product-card reveal reveal-delay-{{ loop.index % 4 }}">
                 <div class="p-img">
                     {% if p.images %}
                         {% set first_img = p.images.split(',')[0].strip() %}
@@ -261,68 +291,38 @@
         {% endfor %}
     </div>
 
-    <!-- Map -->
+    <!-- Map & Contacts -->
     <div class="bento-section" id="contacts" style="padding-top:0;">
-        <h2 class="section-head">Как нас найти</h2>
+        <h2 class="section-head reveal">Как нас найти</h2>
         <div style="display:grid; grid-template-columns: 1fr 2fr; gap:24px;">
-            <div class="bento-card" style="min-height:auto;">
+            <div class="bento-card reveal" style="min-height:auto;">
                 <div class="card-label">Адрес</div>
                 <h3 class="card-title">Владивосток,<br>ул. Матросова, 30</h3>
                 <p class="card-desc">Пн-Пт: 10:00 - 18:00<br>+7 (951) 011-58-78</p>
             </div>
-            <div class="map-wrap">
+            <div class="map-wrap reveal reveal-delay-1">
                 <iframe src="https://yandex.ru/map-widget/v1/?um=constructor%3A0&amp;source=constructorLink&amp;text=Владивосток%2C%20улица%20Матросова%2C%2030&amp;z=17" allowfullscreen="true"></iframe>
             </div>
         </div>
     </div>
 
-    <footer>
+    <footer class="reveal">
         Copyright © 2026 DieselDonor Inc. Все права защищены.<br>
         Политика конфиденциальности | Условия использования
     </footer>
-    <!-- SKILLS ANIMATION STYLE & SCRIPT -->
-    <style>
-        /* Базовые стили для анимации (как у emilkowalski) */
-        .reveal {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
-            filter: blur(5px);
-        }
-        
-        .reveal.active {
-            opacity: 1;
-            transform: translateY(0);
-            filter: blur(0);
-        }
 
-        /* Задержки для сеток (bento grid и товары) */
-        .reveal-delay-1 { transition-delay: 0.1s; }
-        .reveal-delay-2 { transition-delay: 0.2s; }
-        .reveal-delay-3 { transition-delay: 0.3s; }
-        .reveal-delay-4 { transition-delay: 0.4s; }
-    </style>
-
+    <!-- SKILLS ANIMATION SCRIPT -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Находим все элементы с классом reveal
             const reveals = document.querySelectorAll('.reveal');
-
-            // Создаем наблюдатель (Intersection Observer)
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach((entry) => {
                     if (entry.isIntersecting) {
                         entry.target.classList.add('active');
-                        // Опционально: можно убрать наблюдение после появления
-                        // observer.unobserve(entry.target); 
                     }
                 });
-            }, {
-                threshold: 0.15, // Элемент должен появиться на 15% чтобы сработать
-                rootMargin: "0px 0px -50px 0px" // Небольшой отступ снизу
-            });
+            }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
 
-            // Начинаем следить за каждым элементом
             reveals.forEach((el) => observer.observe(el));
         });
     </script>
