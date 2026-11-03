@@ -20,7 +20,10 @@ def get_db():
     return psycopg.connect(DATABASE_URL, row_factory=dict_row)
 
 
-# --- ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ И ДЕКОРАТОРЫ (должны быть ДО маршрутов) ---
+# ==========================================
+# 1. ДЕКОРАТОРЫ И ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
+# (Должны быть определены ДО всех маршрутов!)
+# ==========================================
 
 def admin_required(func):
     @wraps(func)
@@ -87,7 +90,9 @@ def init_db():
         conn.commit()
 
 
-# --- ПУБЛИЧНЫЕ МАРШРУТЫ ---
+# ==========================================
+# 2. ПУБЛИЧНЫЕ МАРШРУТЫ
+# ==========================================
 
 @app.route("/")
 def home():
@@ -155,7 +160,9 @@ def products_api():
     return jsonify(products)
 
 
-# --- КОРЗИНА ---
+# ==========================================
+# 3. КОРЗИНА
+# ==========================================
 
 @app.route("/cart")
 def cart():
@@ -203,7 +210,9 @@ def clear_cart():
     return redirect(url_for("cart"))
 
 
-# --- API ДЛЯ ЧАТА И ДОСТАВКИ ---
+# ==========================================
+# 4. API ДЛЯ ЧАТА И ДОСТАВКИ
+# ==========================================
 
 @app.route("/api/calculate-delivery", methods=["POST"])
 def api_calculate_delivery():
@@ -254,7 +263,7 @@ def get_chat_history(session_id):
 
 
 @app.route("/api/chat/reply", methods=["POST"])
-@admin_required
+@admin_required  # Теперь этот декоратор точно известен Python
 def send_manager_reply():
     data = request.get_json()
     session_id = data.get("session_id"); message = data.get("message")
@@ -264,7 +273,9 @@ def send_manager_reply():
     return jsonify({"status": "ok"})
 
 
-# --- АДМИНКА ---
+# ==========================================
+# 5. АДМИНКА
+# ==========================================
 
 @app.route("/admin/login", methods=["GET", "POST"])
 def login():
@@ -349,6 +360,9 @@ def delete_product(product_id):
     flash("Товар удалён"); return redirect(url_for("admin"))
 
 
+# ==========================================
+# ЗАПУСК
+# ==========================================
 init_db()
 
 if __name__ == "__main__":
