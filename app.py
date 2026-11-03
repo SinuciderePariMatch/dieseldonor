@@ -321,9 +321,6 @@ def delete_product(product_id):
     return redirect(url_for("admin"))
 
 
-# Инициализация БД при старте
-init_db()
-
 # --- API ДЛЯ ЧАТА И ДОСТАВКИ ---
 
 @app.route("/api/calculate-delivery", methods=["POST"])
@@ -346,7 +343,15 @@ def api_calculate_delivery():
 @app.route("/api/cart/add-ajax", methods=["POST"])
 def add_to_cart_ajax():
     """Добавление товара в корзину через чат/AJAX"""
-    product_id = int(request.form.get("product_id"))
+    raw_id = request.form.get("product_id")
+    if not raw_id:
+        return jsonify({"status": "error", "message": "ID товара не указан"}), 400
+        
+    try:
+        product_id = int(raw_id)
+    except ValueError:
+        return jsonify({"status": "error", "message": "Некорректный ID"}), 400
+
     qty = int(request.form.get("qty", 1))
     
     cart = session.get("cart", [])
@@ -362,5 +367,10 @@ def add_to_cart_ajax():
     
     total_items = sum(i["qty"] for i in cart)
     return jsonify({"status": "ok", "count": total_items})
+
+
+# Инициализация БД при старте
+init_db()
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
