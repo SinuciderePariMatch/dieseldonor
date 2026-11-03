@@ -128,7 +128,17 @@
                         </select>
                     </div>
                 </div>
+<!-- Вставь это ПОСЛЕ закрывающего </div> блока tk-fields -->
+<div id="delivery-cost" style="margin-bottom:20px; padding:12px; background:rgba(255,215,0,0.05); border-radius:10px; font-size:0.9rem; display:none;"></div>
 
+<script>
+    // Показываем блок только при выборе ТК
+    const origSetDelivery = setDelivery;
+    setDelivery = function(type) {
+        origSetDelivery(type);
+        document.getElementById('delivery-cost').style.display = type === 'tk' ? 'block' : 'none';
+    }
+</script>
                 <!-- Общие данные клиента -->
                 <div class="form-group">
                     <label>Ваше имя *</label>
@@ -174,65 +184,135 @@
         {% endif %}
     </div>
 
-    <script>
-        let deliveryType = 'tk';
+   <script>
+    let deliveryType = 'tk';
+    let currentDeliveryPrice = 0;
 
-        function setDelivery(type) {
-            deliveryType = type;
-            document.querySelectorAll('.toggle-opt').forEach(el => el.classList.remove('active'));
-            event.target.classList.add('active');
-            
-            const tkFields = document.getElementById('tk-fields');
-            const cityInput = tkFields.querySelector('input[name="city_to"]');
-            const tkSelect = tkFields.querySelector('select[name="tk_name"]');
-            
-            if (type === 'tk') {
-                tkFields.classList.remove('hidden');
-                cityInput.required = true;
-                tkSelect.required = true;
-            } else {
-                tkFields.classList.add('hidden');
-                cityInput.required = false;
-                tkSelect.required = false;
-            }
+    function setDelivery(type) {
+        deliveryType = type;
+        document.querySelectorAll('.toggle-opt').forEach(el => el.classList.remove('active'));
+        event.target.classList.add('active');
+        
+        const tkFields = document.getElementById('tk-fields');
+        const cityInput = tkFields.querySelector('input[name="city_to"]');
+        const tkSelect = tkFields.querySelector('select[name="tk_name"]');
+        
+        if (type === 'tk') {
+            tkFields.classList.remove('hidden');
+            cityInput.required = true;
+            tkSelect.required = true;
+            recalcDelivery(); // Пересчитываем при переключении
+        } else {
+            tkFields.classList.add('hidden');
+            cityInput.required = false;
+            tkSelect.required = false;
+            currentDeliveryPrice = 0;
+            updateTotal();
+        }
+    }
+
+    function setPayment(el, method) {
+        document.querySelectorAll('.pay-opt').forEach(e => e.classList.remove('active'));
+        el.classList.add('active');
+        document.getElementById('paymentInput').value = method;
+    }
+
+    // Автоматический пересчет доставки
+    async function recalcDelivery() {
+        if (deliveryType !== 'tk') return;
+        
+        const city = document.querySelector('input[name="city_to"]').value.trim();
+        const tk = document.querySelector('select[name="tk_name"]').value;
+        
+        if (!city || !tk) {
+            document.getElementById('delivery-cost').innerHTML = '';
+            currentDeliveryPrice = 0;
+            updateTotal();
+            return;
         }
 
-        function setPayment(el, method) {
-            document.querySelectorAll('.pay-opt').forEach(e => e.classList.remove('active'));
-            el.classList.add('active');
-            document.getElementById('paymentInput').value = method;
-        }
-
-        async function submitOrder(e) {
-            e.preventDefault();
-            const btn = document.getElementById('submitBtn');
-            btn.disabled = true;
-            btn.textContent = 'Отправка...';
-
-            const formData = new FormData(e.target);
-            formData.append('delivery_type', deliveryType);
-            formData.append('total_price', '{{ total_price }}');
+        // Показываем загрузку
+        document.getElementById('delivery-cost').innerHTML = '<span style="color:#86868b;">⏳ Считаем...</span>';
+        
+        try {
+            const res = await fetch('/api/calculate-delivery', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    city: city,
+                    tk_name: tk,
+                    weight: {{ total_price / 1000 | round(1) }} // Примерный вес: 1кг на 1000₽ стоимости
+                })
+            });
+            const data = await res.json();
             
-            // Добавляем товары в форму
-            {% for p in products %}
-            formData.append('items', '{{ p.name }} (x{{ p.qty }}) - {{ "{:,}".format((p.price or 0) * p.qty).replace(',', ' ') }}₽');
-            {% endfor %}
-
-            try {
-                // Здесь можно отправить на бэкенд или сразу в Telegram через API
-                // Для простоты пока имитируем успех
-                await new Promise(r => setTimeout(r, 1500));
-                
-                alert(`✅ Заказ успешно оформлен!\n\nМенеджер свяжется с вами по указанному телефону для подтверждения оплаты и отправки.\n\nСумма: ${formData.get('total_price')} ₽\nТип: ${deliveryType === 'tk' ? 'Доставка ' + formData.get('tk_name') : 'Самовывоз'}`);
-                
-                // Очистка корзины после успеха (нужно реализовать на бэкенде)
-                window.location.href = '/';
-            } catch (err) {
-                alert('❌ Ошибка при оформлении. Пожалуйста, напишите нам в WhatsApp.');
-                btn.disabled = false;
-                btn.textContent = 'Оформить заказ';
-            }
+            currentDeliveryPrice = data.price;
+            document.getElementById('delivery-cost').innerHTML = 
+                `🚚 Доставка ${data.tk_name}: <b>${data.price} ₽</b> (${data.days} дн.)`;
+            
+            updateTotal();
+        } catch (e) {
+            document.getElementById('delivery-cost').innerHTML = 
+                '<span style="color:#ff4444;">❌ Ошибка расчета</span>';
         }
+    }
+
+    // Обновление итоговой суммы
+    function updateTotal() {
+        const basePrice = {{ total_price }};
+        const total = basePrice + currentDeliveryPrice;
+        document.getElementById('final-total').textContent = 
+            total.toLocaleString('ru-RU').replace(',', ' ') + ' ₽';
+    }
+
+    // Слушатели событий для автопересчета
+    document.addEventListener('DOMContentLoaded', () => {
+        const cityInput = document.querySelector('input[name="city_to"]');
+        const tkSelect = document.querySelector('select[name="tk_name"]');
+        
+        if (cityInput) cityInput.addEventListener('input', debounce(recalcDelivery, 500));
+        if (tkSelect) tkSelect.addEventListener('change', recalcDelivery);
+    });
+
+    // Debounce чтобы не спамить запросами
+    function debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+
+    async function submitOrder(e) {
+        e.preventDefault();
+        const btn = document.getElementById('submitBtn');
+        btn.disabled = true;
+        btn.textContent = 'Отправка...';
+
+        const formData = new FormData(e.target);
+        formData.append('delivery_type', deliveryType);
+        formData.append('delivery_price', currentDeliveryPrice);
+        formData.append('total_price', {{ total_price }} + currentDeliveryPrice);
+        
+        {% for p in products %}
+        formData.append('items', '{{ p.name }} (x{{ p.qty }}) - {{ "{:,}".format((p.price or 0) * p.qty).replace(',', ' ') }}₽');
+        {% endfor %}
+
+        try {
+            await new Promise(r => setTimeout(r, 1500));
+            alert(`✅ Заказ успешно оформлен!\n\nИтого: ${formData.get('total_price')} ₽\n${deliveryType === 'tk' ? 'Доставка: ' + formData.get('tk_name') : 'Самовывоз'}\n\nМенеджер свяжется с вами!`);
+            window.location.href = '/';
+        } catch (err) {
+            alert('❌ Ошибка. Напишите нам в WhatsApp.');
+            btn.disabled = false;
+            btn.textContent = 'Оформить заказ';
+        }
+    }
+</script>
     </script>
 </body>
 </html>

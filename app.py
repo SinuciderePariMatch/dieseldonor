@@ -325,20 +325,33 @@ def delete_product(product_id):
 
 @app.route("/api/calculate-delivery", methods=["POST"])
 def api_calculate_delivery():
-    """Расчет стоимости доставки (имитация тарифов ТК)"""
+    """Расчет стоимости доставки с учетом веса товаров из корзины"""
     data = request.get_json()
     city = data.get("city", "Москва")
-    weight = float(data.get("weight", 5))
+    tk_name = data.get("tk_name", "СДЭК")
     
-    # Базовые тарифы (в реальности здесь запрос к API СДЭК/ПЭК)
+    # Получаем вес из корзины клиента (через session_id или передаем явно)
+    # Для простоты берем вес из запроса или считаем по умолчанию
+    cart_weight = float(data.get("weight", 5)) 
+    
+    # Тарифы (можно вынести в конфиг или БД)
     rates = {
-        "СДЭК": {"price": int(weight * 90 + 200), "days": "2-4"},
-        "ПЭК": {"price": int(weight * 75 + 150), "days": "4-6"},
-        "Деловые Линии": {"price": int(weight * 85 + 180), "days": "3-5"}
+        "СДЭК": {"base": 200, "per_kg": 90, "days": "2-4"},
+        "ПЭК": {"base": 150, "per_kg": 75, "days": "4-6"},
+        "Деловые Линии": {"base": 180, "per_kg": 85, "days": "3-5"},
+        "КИТ": {"base": 120, "per_kg": 65, "days": "5-8"},
+        "Байкал Сервис": {"base": 160, "per_kg": 80, "days": "4-7"}
     }
     
-    return jsonify(rates)
-
+    tk = rates.get(tk_name, rates["СДЭК"])
+    price = tk["base"] + int(cart_weight * tk["per_kg"])
+    
+    return jsonify({
+        "price": price,
+        "days": tk["days"],
+        "tk_name": tk_name,
+        "city": city
+    })
 
 @app.route("/api/cart/add-ajax", methods=["POST"])
 def add_to_cart_ajax():
