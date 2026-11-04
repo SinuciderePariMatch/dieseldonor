@@ -31,7 +31,7 @@
             color: var(--text-main);
             line-height: 1.5;
             overflow-x: hidden;
-            scroll-behavior: smooth; /* Нативный плавный скролл для всей страницы */
+            scroll-behavior: smooth;
         }
 
         /* --- NAVIGATION --- */
@@ -486,45 +486,70 @@
             const input = document.getElementById('chat-input');
             const text = input.value.trim();
             if (!text) return;
+
             appendMessage('client', text);
             input.value = '';
 
+            // Сохраняем сообщение клиента
             fetch('/api/chat/save', {
                 method: 'POST', headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ session_id: CHAT_SESSION_ID, sender: 'client', message: text })
             }).catch(e => console.error('Save error:', e));
 
-            const lowerText = text.toLowerCase();
-            if (lowerText.includes('доставк') || lowerText.includes('рассчитай')) {
-                showDeliveryForm();
-            } else if (lowerText.includes('добавь') || lowerText.includes('куплю')) {
-                if (FIRST_PRODUCT_ID) addToCartViaChat(FIRST_PRODUCT_ID, FIRST_PRODUCT_NAME);
-            } else {
-                setTimeout(() => {
-                    appendMessage('manager', 'Я передал ваш вопрос менеджеру. Ожидайте ответа!');
-                    appendActionButtons();
-                }, 1000);
-            }
+            // Проверяем, подключился ли уже менеджер (ищем системное сообщение в DOM)
+            const container = document.getElementById('chat-messages');
+            const managerConnected = Array.from(container.children).some(div => 
+                div.innerHTML.includes('С вами начал работать менеджер')
+            );
+
+            // Если менеджер НЕ подключился - работает бот
+            if (!managerConnected) {
+                const lowerText = text.toLowerCase();
+                if (lowerText.includes('доставк') || lowerText.includes('рассчитай')) {
+                    showDeliveryForm();
+                } else if (lowerText.includes('добавь') || lowerText.includes('куплю')) {
+                    if (FIRST_PRODUCT_ID) addToCartViaChat(FIRST_PRODUCT_ID, FIRST_PRODUCT_NAME);
+                } else {
+                    setTimeout(() => {
+                        appendMessage('manager', 'Я передал ваш вопрос менеджеру. Ожидайте ответа!');
+                        appendActionButtons();
+                    }, 1000);
+                }
+            } 
+            // Если менеджер УЖЕ подключился - бот молчит, клиент ждет человека
         }
 
-        // Автопроверка новых ответов
+        // Автопроверка новых ответов (обновленная логика для SYSTEM сообщений)
         setInterval(async () => {
             try {
                 const res = await fetch(`/api/chat/history/${CHAT_SESSION_ID}`);
                 const msgs = await res.json();
+                
                 if (msgs.length > 0) {
                     const lastMsg = msgs[msgs.length - 1];
-                    if (lastMsg.sender === 'manager' && msgs.length > lastKnownMsgCount) {
+                    
+                    // Показываем новые сообщения от менеджера ИЛИ системы
+                    if ((lastMsg.sender === 'manager' || lastMsg.sender === 'system') && msgs.length > lastKnownMsgCount) {
                         lastKnownMsgCount = msgs.length;
+                        
                         const chatWin = document.getElementById('chat-window');
                         if (chatWin.style.display === 'none' || chatWin.style.display === '') {
                             playClientSound();
-                            showClientNotification("Менеджер ответил вам!");
+                            showClientNotification(lastMsg.sender === 'system' ? "Менеджер подключился!" : "Менеджер ответил вам!");
+                            
                             const btn = document.querySelector('#chat-widget button');
                             btn.style.animation = 'pulse 1s infinite';
                             setTimeout(() => btn.style.animation = '', 5000);
                         } else {
-                            appendMessage('manager', lastMsg.message);
+                            // Особый стиль для системного сообщения (по центру, желтый)
+                            if (lastMsg.sender === 'system') {
+                                const sysDiv = document.createElement('div');
+                                sysDiv.innerHTML = lastMsg.message;
+                                sysDiv.style.cssText = 'align-self:center; background:rgba(255,215,0,0.15); border:1px solid var(--accent); color:var(--accent); padding:10px 16px; border-radius:20px; font-size:0.85rem; text-align:center; max-width:90%; animation:slideUp 0.3s; margin: 10px 0;';
+                                document.getElementById('chat-messages').appendChild(sysDiv);
+                            } else {
+                                appendMessage('manager', lastMsg.message);
+                            }
                         }
                     }
                 }
