@@ -1,15 +1,26 @@
     <script>
         // --- 1. ПЛАВНЫЙ СКРОЛЛ ДЛЯ МЕНЮ ---
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const targetId = this.getAttribute('href');
-                if (targetId === '#') return;
-                const targetElement = document.querySelector(targetId);
-                if (targetElement) {
-                    targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                });
             });
+            
+            // Запуск анимаций появления
+            const reveals = document.querySelectorAll('.reveal');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) entry.target.classList.add('active');
+                });
+            }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
+            reveals.forEach((el) => observer.observe(el));
         });
 
         // --- 2. ДАННЫЕ И ЧАТ ---
@@ -21,7 +32,7 @@
 
         let clientAudioCtx = null;
         let lastKnownMsgCount = 0;
-        let isManagerConnected = false; // Флаг подключения менеджера
+        let isManagerConnected = false; 
 
         function toggleChat() {
             const win = document.getElementById('chat-window');
@@ -36,6 +47,7 @@
 
         function appendMessage(sender, html) {
             const container = document.getElementById('chat-messages');
+            if (!container) return;
             const div = document.createElement('div');
             div.innerHTML = html;
             div.style.cssText = sender === 'client' 
@@ -51,16 +63,18 @@
         }
 
         function playClientSound() {
-            if (!clientAudioCtx) clientAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            const osc = clientAudioCtx.createOscillator();
-            const gain = clientAudioCtx.createGain();
-            osc.connect(gain); gain.connect(clientAudioCtx.destination);
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(587.33, clientAudioCtx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(880, clientAudioCtx.currentTime + 0.1);
-            gain.gain.setValueAtTime(0.1, clientAudioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, clientAudioCtx.currentTime + 0.4);
-            osc.start(); osc.stop(clientAudioCtx.currentTime + 0.4);
+            try {
+                if (!clientAudioCtx) clientAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = clientAudioCtx.createOscillator();
+                const gain = clientAudioCtx.createGain();
+                osc.connect(gain); gain.connect(clientAudioCtx.destination);
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(587.33, clientAudioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(880, clientAudioCtx.currentTime + 0.1);
+                gain.gain.setValueAtTime(0.1, clientAudioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, clientAudioCtx.currentTime + 0.4);
+                osc.start(); osc.stop(clientAudioCtx.currentTime + 0.4);
+            } catch(e) {}
         }
 
         function showClientNotification(text) {
@@ -92,16 +106,14 @@
             appendMessage('client', text);
             input.value = '';
 
-            // Сохраняем сообщение клиента
             fetch('/api/chat/save', {
                 method: 'POST', headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ session_id: CHAT_SESSION_ID, sender: 'client', message: text })
             }).catch(e => console.error('Save error:', e));
 
-            // Если менеджер УЖЕ подключился - бот молчит
+            // Если менеджер подключился - бот молчит
             if (isManagerConnected) return;
 
-            // Если менеджер НЕ подключился - работает бот
             const lowerText = text.toLowerCase();
             if (lowerText.includes('доставк') || lowerText.includes('рассчитай')) {
                 showDeliveryForm();
@@ -115,35 +127,35 @@
             }
         }
 
-        // Автопроверка новых ответов (ИСПРАВЛЕННАЯ ЛОГИКА)
+        // Автопроверка новых ответов
         setInterval(async () => {
             try {
                 const res = await fetch(`/api/chat/history/${CHAT_SESSION_ID}`);
+                if (!res.ok) return;
                 const msgs = await res.json();
                 
                 if (msgs.length > 0) {
-                    const lastMsg = msgs[msgs.length - 1];
-                    
-                    // Проверяем ВСЕ сообщения на наличие системного уведомления
-                    // Это надежнее, чем искать только последнее
-                    if (!isManagerConnected) {
-                        isManagerConnected = msgs.some(m => m.sender === 'system');
+                    // Проверяем наличие системного сообщения во всей истории
+                    if (!isManagerConnected && msgs.some(m => m.sender === 'system')) {
+                        isManagerConnected = true;
                     }
 
-                    // Показываем новые сообщения от менеджера ИЛИ системы
+                    const lastMsg = msgs[msgs.length - 1];
+                    
                     if ((lastMsg.sender === 'manager' || lastMsg.sender === 'system') && msgs.length > lastKnownMsgCount) {
                         lastKnownMsgCount = msgs.length;
                         
                         const chatWin = document.getElementById('chat-window');
-                        if (chatWin.style.display === 'none' || chatWin.style.display === '') {
+                        if (chatWin && (chatWin.style.display === 'none' || chatWin.style.display === '')) {
                             playClientSound();
                             showClientNotification(lastMsg.sender === 'system' ? "Менеджер подключился!" : "Менеджер ответил вам!");
                             
                             const btn = document.querySelector('#chat-widget button');
-                            btn.style.animation = 'pulse 1s infinite';
-                            setTimeout(() => btn.style.animation = '', 5000);
-                        } else {
-                            // Особый стиль для системного сообщения (по центру, желтый)
+                            if(btn) {
+                                btn.style.animation = 'pulse 1s infinite';
+                                setTimeout(() => btn.style.animation = '', 5000);
+                            }
+                        } else if (chatWin) {
                             if (lastMsg.sender === 'system') {
                                 const sysDiv = document.createElement('div');
                                 sysDiv.innerHTML = lastMsg.message;
@@ -155,12 +167,13 @@
                         }
                     }
                 }
-            } catch (e) {}
+            } catch (e) { console.log('Polling error:', e); }
         }, 3000);
 
         // --- 3. ФОРМА РАСЧЕТА ДОСТАВКИ В ЧАТЕ ---
         function showDeliveryForm() {
             const container = document.getElementById('chat-messages');
+            if(!container) return;
             const formDiv = document.createElement('div');
             formDiv.className = 'chat-form-container';
             formDiv.style.cssText = 'align-self:flex-start; background:rgba(255,255,255,0.05); padding:16px; border-radius:18px; max-width:90%; animation:slideUp 0.3s; border: 1px solid rgba(255,255,255,0.1);';
@@ -237,6 +250,7 @@
 
         function appendActionButtons() {
             const container = document.getElementById('chat-messages');
+            if(!container) return;
             const btnsDiv = document.createElement('div');
             btnsDiv.style.cssText = 'align-self:flex-start; display:flex; gap:8px; flex-wrap:wrap; margin-top:5px; animation:slideUp 0.3s;';
             const actions = [
@@ -254,15 +268,4 @@
             container.appendChild(btnsDiv);
             container.scrollTop = container.scrollHeight;
         }
-
-        // --- 4. АНИМАЦИИ ПОЯВЛЕНИЯ (SKILLS STYLE) ---
-        document.addEventListener('DOMContentLoaded', () => {
-            const reveals = document.querySelectorAll('.reveal');
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach((entry) => {
-                    if (entry.isIntersecting) entry.target.classList.add('active');
-                });
-            }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
-            reveals.forEach((el) => observer.observe(el));
-        });
     </script>
