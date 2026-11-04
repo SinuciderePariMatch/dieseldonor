@@ -201,10 +201,32 @@ def get_chat_history(session_id):
 @app.route("/api/chat/reply", methods=["POST"])
 @admin_required
 def send_manager_reply():
-    data = request.get_json(); session_id = data.get("session_id"); message = data.get("message")
+    """Отправка сообщения от менеджера с авто-уведомлением о подключении"""
+    data = request.get_json()
+    session_id = data.get("session_id")
+    message = data.get("message")
+    
     with get_db() as conn:
-        conn.execute("INSERT INTO chat_messages (session_id, sender, message) VALUES (%s, 'manager', %s)", (session_id, message))
+        # Проверяем, писал ли уже менеджер в этот диалог ранее
+        has_replied_before = conn.execute(
+            "SELECT id FROM chat_messages WHERE session_id = %s AND sender = 'manager' LIMIT 1",
+            (session_id,)
+        ).fetchone()
+        
+        # Если это ПЕРВОЕ сообщение менеджера — добавляем системное уведомление
+        if not has_replied_before:
+            conn.execute(
+                "INSERT INTO chat_messages (session_id, sender, message) VALUES (%s, 'system', %s)",
+                (session_id, "👨‍💼 С вами начал работать менеджер. Ознакомливается с информацией, подождите пару минут.")
+            )
+            
+        # Добавляем само сообщение менеджера
+        conn.execute(
+            "INSERT INTO chat_messages (session_id, sender, message) VALUES (%s, 'manager', %s)",
+            (session_id, message)
+        )
         conn.commit()
+        
     return jsonify({"status": "ok"})
 
 # --- ЗАКАЗЫ ---
