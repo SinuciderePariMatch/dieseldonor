@@ -1,26 +1,23 @@
 import os
 import json
-
-@app.template_filter('from_json')
-def from_json(value):
-    try: 
-        return json.loads(value)
-    except: 
-        return []
 from functools import wraps
 import psycopg
 from psycopg.rows import dict_row
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 
+# 1. Сначала создаем приложение
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "change-this-secret-in-production")
 
-# Фильтр для парсинга JSON в шаблонах
+# 2. Только ПОТОМ регистрируем фильтры
 @app.template_filter('from_json')
 def from_json(value):
-    try: return json.loads(value)
-    except: return []
+    if not value: return []
+    try: 
+        return json.loads(value)
+    except (json.JSONDecodeError, TypeError): 
+        return []
 
 DATABASE_URL = os.environ.get("DATABASE_URL")
 if not DATABASE_URL: raise RuntimeError("DATABASE_URL is not configured")
