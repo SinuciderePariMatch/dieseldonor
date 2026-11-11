@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-    <title>Li Auto Parts | Официальный поставщик запчастей</title>
+    <title>Li Auto Parts | Запчасти для Lixiang L7, L8, L9, ONE</title>
     <style>
         :root {
             --bg-main: #ffffff;
@@ -25,7 +25,7 @@
 
         /* --- NAVIGATION --- */
         nav {
-            position: sticky; top: 0; z-index: 1000; background: rgba(255, 255, 255, 0.85); backdrop-filter: var(--blur);
+            position: sticky; top: 0; z-index: 1000; background: rgba(255, 255, 255, 0.9); backdrop-filter: var(--blur);
             border-bottom: 1px solid var(--border); padding: 0 40px; height: 70px; display: flex; align-items: center; justify-content: space-between;
         }
         .nav-logo { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.5px; text-decoration: none; color: var(--text-main); }
@@ -37,7 +37,7 @@
         
         /* --- HERO SLIDER --- */
         .slider-container {
-            position: relative; width: 100%; height: 600px; overflow: hidden; background: #000;
+            position: relative; width: 100%; height: 600px; overflow: hidden; background: #111;
         }
         .slider-track {
             display: flex; height: 100%; transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
@@ -47,10 +47,10 @@
             background-size: cover; background-position: center;
         }
         .slide::before {
-            content: ''; position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.7));
+            content: ''; position: absolute; inset: 0; background: linear-gradient(to right, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.2) 100%);
         }
         .slide-content {
-            position: relative; z-index: 2; text-align: center; color: #fff; max-width: 800px; padding: 20px;
+            position: relative; z-index: 2; text-align: left; color: #fff; max-width: 600px; padding: 0 40px; margin-left: 10%;
             transform: translateY(20px); opacity: 0; transition: all 0.8s ease-out;
         }
         .slide.active .slide-content { transform: translateY(0); opacity: 1; }
@@ -58,13 +58,13 @@
             display: inline-block; background: var(--accent); color: #fff; padding: 6px 16px; border-radius: 20px;
             font-size: 0.8rem; font-weight: 700; text-transform: uppercase; margin-bottom: 20px; letter-spacing: 1px;
         }
-        .slide h2 { font-size: clamp(2.5rem, 5vw, 4.5rem); font-weight: 800; margin-bottom: 20px; letter-spacing: -1px; line-height: 1.1; }
-        .slide p { font-size: 1.2rem; opacity: 0.9; margin-bottom: 30px; font-weight: 400; }
+        .slide h2 { font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 800; margin-bottom: 20px; letter-spacing: -1px; line-height: 1.1; }
+        .slide p { font-size: 1.2rem; opacity: 0.9; margin-bottom: 30px; font-weight: 400; line-height: 1.6; }
         .slide-btn {
-            background: #fff; color: #000; padding: 14px 32px; border-radius: 30px; text-decoration: none;
-            font-weight: 700; display: inline-block; transition: transform 0.2s;
+            background: var(--accent); color: #fff; padding: 14px 32px; border-radius: 30px; text-decoration: none;
+            font-weight: 700; display: inline-block; transition: transform 0.2s; border: none; cursor: pointer;
         }
-        .slide-btn:hover { transform: scale(1.05); }
+        .slide-btn:hover { transform: scale(1.05); background: #e65c00; }
 
         /* Slider Controls */
         .slider-dots {
@@ -73,92 +73,92 @@
         .dot {
             width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.4); cursor: pointer; transition: all 0.3s;
         }
-        .dot.active { background: #fff; transform: scale(1.3); }
+        .dot.active { background: var(--accent); transform: scale(1.3); }
         .slider-arrow {
             position: absolute; top: 50%; transform: translateY(-50%); width: 50px; height: 50px;
-            background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); border-radius: 50%;
+            background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border-radius: 50%;
             display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10;
-            border: 1px solid rgba(255,255,255,0.3); transition: all 0.3s; color: #fff;
+            border: 1px solid rgba(255,255,255,0.2); transition: all 0.3s; color: #fff; font-size: 1.2rem;
         }
-        .slider-arrow:hover { background: rgba(255,255,255,0.4); }
+        .slider-arrow:hover { background: rgba(255,255,255,0.3); }
         .prev { left: 30px; } .next { right: 30px; }
 
         /* --- SECTIONS --- */
-        .section-container { max-width: var(--container-width); margin: 0 auto; padding: 100px 40px; }
-        .section-head { font-size: clamp(2.5rem, 4vw, 3.5rem); font-weight: 800; margin-bottom: 60px; text-align: center; letter-spacing: -1px; }
+        .section-container { max-width: var(--container-width); margin: 0 auto; padding: 80px 40px; }
+        .section-head { font-size: clamp(2rem, 4vw, 2.5rem); font-weight: 800; margin-bottom: 40px; text-align: left; letter-spacing: -0.5px; }
         
-        /* Bento Grid with "Water" */
-        .bento-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+        /* Bento Grid */
+        .bento-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
         .bento-card {
-            background: var(--bg-card); border-radius: 32px; padding: 45px; position: relative;
-            overflow: hidden; border: 1px solid transparent; display: flex; flex-direction: column; justify-content: space-between; min-height: 400px;
+            background: var(--bg-card); border-radius: 24px; padding: 30px; position: relative;
+            overflow: hidden; border: 1px solid transparent; display: flex; flex-direction: column; 
             transition: transform 0.3s;
         }
-        .bento-card:hover { transform: translateY(-5px); }
+        .bento-card:hover { transform: translateY(-3px); }
         .bento-card.large { grid-column: span 2; background: #fff; border: 1px solid var(--border); }
         .bento-card.tall { grid-row: span 2; background: #1d1d1f; color: #fff; }
         .bento-card.tall .card-label { color: #666; }
         .bento-card.tall a { color: #fff; border-top-color: #333; }
         .bento-card.tall a:hover { background: rgba(255,255,255,0.1); color: var(--accent); }
         
-        .card-label { font-size: 0.8rem; color: var(--text-sec); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 15px; font-weight: 700; }
-        .card-title { font-size: clamp(1.8rem, 2.5vw, 2.5rem); font-weight: 800; margin: 0 0 20px; letter-spacing: -0.5px; line-height: 1.1; }
-        .card-desc { color: var(--text-sec); font-size: 1.1rem; line-height: 1.6; margin: 0; font-weight: 400; }
+        .card-label { font-size: 0.75rem; color: var(--text-sec); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; font-weight: 700; }
+        .card-title { font-size: clamp(1.5rem, 2vw, 2rem); font-weight: 800; margin: 0 0 15px; letter-spacing: -0.5px; line-height: 1.2; }
+        .card-desc { color: var(--text-sec); font-size: 1rem; line-height: 1.6; margin: 0; font-weight: 400; }
         .bento-card.tall .card-desc { color: #888; }
 
-        /* Categories List inside Tall Card */
+        /* Categories List */
         .cat-list-item {
-            display: flex; align-items: center; padding: 20px 0; border-top: 1px solid rgba(255,255,255,0.1);
+            display: flex; align-items: center; padding: 18px 0; border-top: 1px solid rgba(255,255,255,0.1);
             text-decoration: none; color: inherit; transition: all 0.3s; gap: 15px;
         }
         .cat-list-item:first-child { border-top: none; }
         .cat-list-item:hover { padding-left: 10px; color: var(--accent); }
-        .cat-icon { font-size: 1.5rem; width: 40px; text-align: center; }
-        .cat-name { font-weight: 600; font-size: 1.1rem; flex: 1; }
+        .cat-icon { font-size: 1.4rem; width: 30px; text-align: center; }
+        .cat-name { font-weight: 600; font-size: 1rem; flex: 1; }
         .cat-arrow { opacity: 0.5; transition: transform 0.3s; }
         .cat-list-item:hover .cat-arrow { transform: translateX(5px); opacity: 1; }
 
         /* --- WHITE CATALOG SECTION --- */
-        .catalog-section { background: #fff; padding: 100px 0; }
+        .catalog-section { background: #fff; padding: 80px 0; border-top: 1px solid var(--border); }
         .products-grid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px;
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 24px;
             max-width: var(--container-width); margin: 0 auto; padding: 0 40px;
         }
         .product-card {
-            background: #fff; border-radius: 24px; overflow: hidden; border: 1px solid var(--border);
+            background: #fff; border-radius: 20px; overflow: hidden; border: 1px solid var(--border);
             transition: all 0.3s; display: flex; flex-direction: column;
         }
-        .product-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0,0,0,0.08); border-color: transparent; }
-        .p-img-wrap { height: 280px; background: #f9f9f9; position: relative; overflow: hidden; }
+        .product-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.06); border-color: transparent; }
+        .p-img-wrap { height: 220px; background: #f9f9f9; position: relative; overflow: hidden; }
         .p-img-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
         .product-card:hover .p-img-wrap img { transform: scale(1.05); }
         .p-badge {
-            position: absolute; top: 15px; left: 15px; background: rgba(255,255,255,0.9); backdrop-filter: blur(5px);
-            padding: 4px 10px; border-radius: 8px; font-size: 0.7rem; font-weight: 700; color: var(--text-main);
+            position: absolute; top: 12px; left: 12px; background: rgba(255,255,255,0.95); backdrop-filter: blur(5px);
+            padding: 4px 8px; border-radius: 6px; font-size: 0.65rem; font-weight: 700; color: var(--text-main); text-transform: uppercase;
         }
-        .p-info { padding: 25px; flex: 1; display: flex; flex-direction: column; }
-        .p-models { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
-        .model-tag { background: rgba(255,107,0,0.08); color: var(--accent); padding: 4px 8px; border-radius: 6px; font-size: 0.7rem; font-weight: 700; }
-        .p-name { font-size: 1.1rem; font-weight: 700; margin-bottom: 8px; line-height: 1.3; color: var(--text-main); }
-        .p-oem { font-size: 0.8rem; color: var(--text-sec); margin-bottom: 15px; font-family: monospace; }
+        .p-info { padding: 20px; flex: 1; display: flex; flex-direction: column; }
+        .p-models { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; }
+        .model-tag { background: rgba(255,107,0,0.08); color: var(--accent); padding: 3px 6px; border-radius: 4px; font-size: 0.65rem; font-weight: 700; }
+        .p-name { font-size: 1rem; font-weight: 700; margin-bottom: 6px; line-height: 1.3; color: var(--text-main); }
+        .p-oem { font-size: 0.75rem; color: var(--text-sec); margin-bottom: 12px; font-family: monospace; background: #f5f5f7; padding: 2px 6px; border-radius: 4px; display: inline-block; width: fit-content;}
         .p-bottom { margin-top: auto; display: flex; justify-content: space-between; align-items: center; }
-        .p-price { font-size: 1.3rem; font-weight: 800; color: var(--text-main); }
+        .p-price { font-size: 1.2rem; font-weight: 800; color: var(--text-main); }
         .add-btn {
-            background: var(--text-main); color: #fff; border: none; border-radius: 12px; padding: 10px 20px;
-            cursor: pointer; font-size: 0.9rem; font-weight: 600; transition: all 0.2s;
+            background: var(--text-main); color: #fff; border: none; border-radius: 10px; padding: 8px 16px;
+            cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: all 0.2s;
         }
         .add-btn:hover { background: var(--accent); transform: scale(1.05); }
 
         /* --- FOOTER --- */
-        footer { background: var(--bg-card); padding: 80px 40px; text-align: center; border-top: 1px solid var(--border); }
-        .footer-logo { font-size: 2rem; font-weight: 800; margin-bottom: 20px; color: var(--text-main); }
-        .footer-links { display: flex; justify-content: center; gap: 30px; margin-bottom: 40px; flex-wrap: wrap; }
-        .footer-links a { color: var(--text-sec); text-decoration: none; font-weight: 500; transition: color 0.3s; }
+        footer { background: var(--bg-card); padding: 60px 40px; text-align: center; border-top: 1px solid var(--border); }
+        .footer-logo { font-size: 1.8rem; font-weight: 800; margin-bottom: 20px; color: var(--text-main); }
+        .footer-links { display: flex; justify-content: center; gap: 30px; margin-bottom: 30px; flex-wrap: wrap; }
+        .footer-links a { color: var(--text-sec); text-decoration: none; font-weight: 500; transition: color 0.3s; font-size: 0.9rem; }
         .footer-links a:hover { color: var(--accent); }
-        .copyright { color: var(--text-sec); font-size: 0.9rem; }
+        .copyright { color: var(--text-sec); font-size: 0.8rem; }
 
         /* --- ANIMATIONS --- */
-        .reveal { opacity: 0; transform: translateY(40px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+        .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
         .reveal.active { opacity: 1; transform: translateY(0); }
 
         /* --- RESPONSIVE --- */
@@ -170,18 +170,14 @@
         }
         @media (max-width: 768px) {
             nav { padding: 0 20px; height: 60px; } .nav-links { display: none; }
-            .section-container { padding: 60px 20px; }
+            .section-container { padding: 50px 20px; }
             .bento-grid { grid-template-columns: 1fr; }
-            .bento-card, .bento-card.large, .bento-card.tall { grid-column: span 1; grid-row: span 1; min-height: auto; padding: 30px; border-radius: 24px; }
+            .bento-card, .bento-card.large, .bento-card.tall { grid-column: span 1; grid-row: span 1; min-height: auto; padding: 25px; border-radius: 20px; }
             .slider-container { height: 400px; }
             .slide h2 { font-size: 2rem; }
+            .slide-content { margin-left: 0; padding: 0 20px; text-align: center; max-width: 100%; }
             .products-grid { grid-template-columns: 1fr; padding: 0 20px; }
-            .slider-arrow { display: none; } /* Hide arrows on mobile, use swipe */
-        }
-        @media (min-width: 1920px) {
-            :root { --container-width: 1600px; }
-            .slider-container { height: 800px; }
-            .slide h2 { font-size: 6rem; }
+            .slider-arrow { display: none; }
         }
     </style>
 </head>
@@ -198,36 +194,36 @@
         <a href="/cart" class="nav-cart">🛒 <span style="background:var(--accent); color:#fff; border-radius:10px; padding:2px 8px; font-size:0.8rem;">{{ session.get('cart', [])|length }}</span></a>
     </nav>
 
-    <!-- Hero Slider -->
+    <!-- Hero Slider (REAL LI AUTO PHOTOS) -->
     <div class="slider-container" id="hero-slider">
         <div class="slider-track">
-            <!-- Slide 1: Масло и расходники -->
-            <div class="slide active" style="background-image: url('https://images.unsplash.com/photo-1625047509168-a7026f36de04?q=80&w=2000&auto=format&fit=crop');">
+            <!-- Slide 1: Li L9 Exterior -->
+            <div class="slide active" style="background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Li_Auto_L9_001.jpg/1280px-Li_Auto_L9_001.jpg');">
                 <div class="slide-content">
-                    <span class="slide-tag">Новое поступление</span>
-                    <h2>Оригинальное масло<br>для Li L7 / L8 / L9</h2>
-                    <p>Специализированная синтетика 0W-20 для гибридных силовых установок. Защита двигателя на уровне заводских стандартов Li Auto.</p>
-                    <a href="/catalog?cat=Расходники" class="slide-btn">Перейти в каталог</a>
+                    <span class="slide-tag">В наличии во Владивостоке</span>
+                    <h2>Оригинальные запчасти<br>для Li L9 и L8</h2>
+                    <p>Пневмоподвеска, рычаги, тормозные системы. Прямая поставка без посредников. Гарантия совместимости по VIN.</p>
+                    <a href="/catalog?cat=Подвеска" class="slide-btn">Смотреть каталог</a>
                 </div>
             </div>
             
-            <!-- Slide 2: Подвеска (Li L9 Interior/Exterior vibe) -->
-            <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1549399542-7e3f8b79c341?q=80&w=2000&auto=format&fit=crop');">
+            <!-- Slide 2: Li ONE / Interior vibe -->
+            <div class="slide" style="background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Li_ONE_003.jpg/1280px-Li_ONE_003.jpg');">
                 <div class="slide-content">
-                    <span class="slide-tag">Хит продаж</span>
-                    <h2>Пневмостойки и рычаги<br>для Li ONE и L-Series</h2>
-                    <p>Устраните стуки в подвеске вашего флагмана. Прямая поставка оригинальных компонентов без посредников.</p>
-                    <a href="/catalog?cat=Подвеска" class="slide-btn">Смотреть запчасти</a>
+                    <span class="slide-tag">Расходники и ТО</span>
+                    <h2>Масло 0W-20 и фильтры<br>для гибридов Li Auto</h2>
+                    <p>Специализированная синтетика для двигателей 1.2T и 1.5T. Оригинальные масляные и салонные фильтры.</p>
+                    <a href="/catalog?cat=Расходники" class="slide-btn">Перейти к расходникам</a>
                 </div>
             </div>
             
-            <!-- Slide 3: Диагностика/Tech -->
-            <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1493238792000-8113da705763?q=80&w=2000&auto=format&fit=crop');">
+            <!-- Slide 3: Li L7 / Tech -->
+            <div class="slide" style="background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Li_Auto_L7_001.jpg/1280px-Li_Auto_L7_001.jpg');">
                 <div class="slide-content">
-                    <span class="slide-tag">Технологии</span>
-                    <h2>Точный подбор<br>по VIN-коду</h2>
-                    <p>Исключите ошибки совместимости. Наши инженеры проверяют каждую деталь по внутренней базе данных Li Auto.</p>
-                    <a href="#contacts" class="slide-btn">Связаться с экспертом</a>
+                    <span class="slide-tag">Кузовные детали</span>
+                    <h2>Бампера, фары и стекла<br>для всей линейки L-Series</h2>
+                    <p>Восстановление после ДТП. Оригинальная геометрия и лакокрасочное покрытие. Подбор по номеру кузова.</p>
+                    <a href="/catalog?cat=Кузов" class="slide-btn">Найти деталь</a>
                 </div>
             </div>
         </div>
@@ -237,28 +233,28 @@
         <div class="slider-dots" id="slider-dots"></div>
     </div>
 
-    <!-- Features Section ("Water") -->
+    <!-- Features Section -->
     <div class="section-container" id="features">
-        <h2 class="section-head reveal">Стандарты премиум-класса</h2>
+        <h2 class="section-head reveal">Почему выбирают нас?</h2>
         <div class="bento-grid">
             <div class="bento-card large reveal">
                 <div>
-                    <div class="card-label">ЭКСПЕРТИЗА</div>
-                    <h3 class="card-title">Глубокая интеграция<br>в экосистему Li Auto</h3>
-                    <p class="card-desc">Мы не просто продаем запчасти — мы понимаем архитектуру ваших автомобилей. Наша команда регулярно проходит обучение по спецификациям моделей L-Series, что позволяет нам гарантировать 100% совместимость даже для сложных электронных компонентов и гибридных агрегатов.</p>
+                    <div class="card-label">СПЕЦИАЛИЗАЦИЯ</div>
+                    <h3 class="card-title">Только Li Auto:<br>L7, L8, L9, ONE</h3>
+                    <p class="card-desc">Мы не распыляемся на другие марки. Наша база знаний и склад заточены исключительно под автомобили Li Auto. Это гарантирует точный подбор даже для редких ревизий деталей.</p>
                 </div>
             </div>
             
             <div class="bento-card reveal reveal-delay-1">
-                <div class="card-label">ЛОГИСТИКА</div>
-                <h3 class="card-title">Скорость<br>без компромиссов</h3>
-                <p class="card-desc">Собственные склады в ключевых хабах. Доставка от 3 дней благодаря оптимизированным цепочкам поставок из Китая.</p>
+                <div class="card-label">ПОДБОР</div>
+                <h3 class="card-title">Проверка по VIN</h3>
+                <p class="card-desc">Исключаем ошибки. Перед отправкой сверяем OEM-номер детали с VIN-кодом вашего автомобиля.</p>
             </div>
 
             <div class="bento-card tall reveal reveal-delay-2">
                 <div style="padding-bottom: 20px;">
                     <div class="card-label">КАТЕГОРИИ</div>
-                    <h3 class="card-title" style="margin-bottom: 30px;">Полный спектр</h3>
+                    <h3 class="card-title" style="margin-bottom: 30px;">Ассортимент</h3>
                 </div>
                 
                 <div style="display: flex; flex-direction: column;">
@@ -286,16 +282,16 @@
             </div>
 
             <div class="bento-card reveal reveal-delay-3">
-                <div class="card-label">ГАРАНТИЯ</div>
-                <h3 class="card-title">Прозрачность<br>и надежность</h3>
-                <p class="card-desc">Каждая деталь проходит трехэтапный контроль качества. Мы предоставляем расширенную гарантию и поддержку при установке.</p>
+                <div class="card-label">ЛОГИСТИКА</div>
+                <h3 class="card-title">Доставка по РФ</h3>
+                <p class="card-desc">Отправка СДЭК, ПЭК, Деловыми Линиями в день заказа. Надежная упаковка тяжелых агрегатов.</p>
             </div>
         </div>
     </div>
 
     <!-- White Catalog Section -->
     <div class="catalog-section" id="catalog">
-        <h2 class="section-head reveal" style="text-align:left; padding: 0 40px; margin-bottom:50px;">Актуальные предложения</h2>
+        <h2 class="section-head reveal" style="padding: 0 40px; margin-bottom:40px;">Новые поступления</h2>
         <div class="products-grid">
             {% for p in popular_products %}
             <div class="product-card reveal reveal-delay-{{ loop.index % 4 }}">
@@ -304,7 +300,7 @@
                         {% set first_img = p.images.split(',')[0].strip() %}
                         <img src="{{ first_img }}" loading="lazy" alt="{{ p.name }}">
                     {% else %}
-                        <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:#ccc;">No Photo</div>
+                        <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:#ccc; font-size:0.8rem;">Нет фото</div>
                     {% endif %}
                     <div class="p-badge">{{ p.condition }}</div>
                 </div>
@@ -332,32 +328,31 @@
     <footer id="contacts">
         <div class="footer-logo">Li<span>Auto</span>Parts</div>
         <div class="footer-links">
-            <a href="#">Политика конфиденциальности</a>
-            <a href="#">Условия гарантии</a>
+            <a href="#">Гарантия и возврат</a>
             <a href="#">Доставка и оплата</a>
-            <a href="#">Для партнеров</a>
+            <a href="#">Политика конфиденциальности</a>
         </div>
-        <div class="copyright">© 2026 Li Auto Parts. All rights reserved.<br>Не является официальным представительством Li Auto Inc.</div>
+        <div class="copyright">© 2026 Li Auto Parts. Специализированный магазин запчастей.<br>Не является официальным дилером Li Auto Inc.</div>
     </footer>
 
-    <!-- Chat Widget (Preserved functionality) -->
+    <!-- Chat Widget -->
     <div id="chat-widget" style="position: fixed; bottom: 30px; right: 30px; z-index: 9999; font-family: -apple-system, BlinkMacSystemFont, sans-serif;">
-        <button onclick="toggleChat()" style="width: 64px; height: 64px; border-radius: 50%; background: var(--accent); border: none; cursor: pointer; box-shadow: 0 10px 30px rgba(255, 107, 0, 0.3); display: flex; align-items: center; justify-content: center; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+        <button onclick="toggleChat()" style="width: 60px; height: 60px; border-radius: 50%; background: var(--accent); border: none; cursor: pointer; box-shadow: 0 10px 30px rgba(255, 107, 0, 0.3); display: flex; align-items: center; justify-content: center; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
         </button>
-        <div id="chat-window" style="display: none; position: absolute; bottom: 80px; right: 0; width: 340px; height: 480px; background: #fff; backdrop-filter: blur(20px); border-radius: 24px; border: 1px solid var(--border); box-shadow: 0 20px 50px rgba(0,0,0,0.1); overflow: hidden; flex-direction: column; animation: slideUp 0.3s ease-out;">
-            <div style="padding: 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; background: var(--bg-card);">
-                <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: #fff;">👨‍💼</div>
-                <div><div style="font-weight: 700; color: var(--text-main); font-size: 0.95rem;">Эксперт Li Auto</div><div style="color: #4ade80; font-size: 0.75rem; display: flex; align-items: center; gap: 4px;"><span style="width:6px; height:6px; background:#4ade80; border-radius:50%;"></span> Онлайн</div></div>
-                <button onclick="toggleChat()" style="margin-left: auto; background: transparent; border: none; color: var(--text-sec); cursor: pointer; font-size: 1.5rem;">×</button>
+        <div id="chat-window" style="display: none; position: absolute; bottom: 70px; right: 0; width: 320px; height: 450px; background: #fff; backdrop-filter: blur(20px); border-radius: 20px; border: 1px solid var(--border); box-shadow: 0 20px 50px rgba(0,0,0,0.1); overflow: hidden; flex-direction: column; animation: slideUp 0.3s ease-out;">
+            <div style="padding: 15px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; background: var(--bg-card);">
+                <div style="width: 36px; height: 36px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: #fff;">👨‍💼</div>
+                <div><div style="font-weight: 700; color: var(--text-main); font-size: 0.9rem;">Менеджер Li Auto</div><div style="color: #4ade80; font-size: 0.7rem; display: flex; align-items: center; gap: 3px;"><span style="width:5px; height:5px; background:#4ade80; border-radius:50%;"></span> Онлайн</div></div>
+                <button onclick="toggleChat()" style="margin-left: auto; background: transparent; border: none; color: var(--text-sec); cursor: pointer; font-size: 1.4rem;">×</button>
             </div>
-            <div id="chat-messages" style="flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; background: #fff;">
-                <div style="align-self: flex-start; background: var(--bg-card); padding: 12px 16px; border-radius: 18px 18px 18px 4px; max-width: 85%; font-size: 0.9rem; color: var(--text-main); line-height: 1.4;">Здравствуйте! 👋<br>Я помогу подобрать запчасти для вашего Li Auto.</div>
+            <div id="chat-messages" style="flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background: #fff;">
+                <div style="align-self: flex-start; background: var(--bg-card); padding: 10px 14px; border-radius: 16px 16px 16px 4px; max-width: 85%; font-size: 0.85rem; color: var(--text-main); line-height: 1.4;">Здравствуйте! 👋<br>Помогу подобрать запчасти для вашего Li Auto.</div>
             </div>
-            <div style="padding: 16px; border-top: 1px solid var(--border); display: flex; gap: 10px; background: var(--bg-card);">
-                <input type="text" id="chat-input" placeholder="Напишите сообщение..." style="flex: 1; background: #fff; border: 1px solid var(--border); border-radius: 20px; padding: 10px 16px; color: var(--text-main); outline: none; font-size: 0.9rem;" onkeypress="if(event.key==='Enter') sendMessage()">
-                <button onclick="sendMessage()" style="background: var(--accent); border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; display: flex; align-items: center; justify-content: center;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+            <div style="padding: 12px; border-top: 1px solid var(--border); display: flex; gap: 8px; background: var(--bg-card);">
+                <input type="text" id="chat-input" placeholder="Сообщение..." style="flex: 1; background: #fff; border: 1px solid var(--border); border-radius: 20px; padding: 8px 14px; color: var(--text-main); outline: none; font-size: 0.85rem;" onkeypress="if(event.key==='Enter') sendMessage()">
+                <button onclick="sendMessage()" style="background: var(--accent); border: none; border-radius: 50%; width: 36px; height: 36px; cursor: pointer; display: flex; align-items: center; justify-content: center;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
                 </button>
             </div>
         </div>
@@ -370,7 +365,7 @@
         @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 107, 0, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(255, 107, 0, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 107, 0, 0); } }
         @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         #chat-messages::-webkit-scrollbar { width: 4px; } #chat-messages::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.2); border-radius: 4px; }
-        @media (max-width: 480px) { #chat-window { width: calc(100vw - 40px); right: -10px; bottom: 90px; height: 60vh; } #chat-widget button { width: 56px; height: 56px; bottom: 20px; right: 20px; } }
+        @media (max-width: 480px) { #chat-window { width: calc(100vw - 40px); right: -10px; bottom: 80px; height: 55vh; } #chat-widget button { width: 50px; height: 50px; bottom: 20px; right: 20px; } }
     </style>
 
     <script>
@@ -381,7 +376,6 @@
         const dotsContainer = document.getElementById('slider-dots');
         let slideInterval;
 
-        // Create dots
         slides.forEach((_, i) => {
             const dot = document.createElement('div');
             dot.className = 'dot' + (i === 0 ? ' active' : '');
@@ -410,10 +404,9 @@
 
         function resetInterval() {
             clearInterval(slideInterval);
-            slideInterval = setInterval(() => moveSlide(1), 5000);
+            slideInterval = setInterval(() => moveSlide(1), 6000);
         }
 
-        // Touch support for mobile
         let touchStartX = 0;
         const slider = document.getElementById('hero-slider');
         slider.addEventListener('touchstart', e => touchStartX = e.touches[0].clientX);
@@ -424,7 +417,7 @@
 
         resetInterval();
 
-        // --- CHAT & OTHER LOGIC (Preserved) ---
+        // --- CHAT & SCROLL LOGIC ---
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault(); const targetId = this.getAttribute('href'); if (targetId === '#') return;
@@ -449,8 +442,8 @@
         function appendMessage(sender, html) {
             const container = document.getElementById('chat-messages'); const div = document.createElement('div'); div.innerHTML = html;
             div.style.cssText = sender === 'client' 
-                ? 'align-self:flex-end; background:var(--accent); color:#fff; padding:12px 16px; border-radius:18px 18px 4px 18px; max-width:85%; font-size:0.9rem; animation:slideUp 0.2s;'
-                : 'align-self:flex-start; background:var(--bg-card); padding:12px 16px; border-radius:18px 18px 18px 4px; max-width:85%; font-size:0.9rem; color:var(--text-main); animation:slideUp 0.2s; line-height:1.5;';
+                ? 'align-self:flex-end; background:var(--accent); color:#fff; padding:10px 14px; border-radius:16px 16px 4px 16px; max-width:85%; font-size:0.85rem; animation:slideUp 0.2s;'
+                : 'align-self:flex-start; background:var(--bg-card); padding:10px 14px; border-radius:16px 16px 16px 4px; max-width:85%; font-size:0.85rem; color:var(--text-main); animation:slideUp 0.2s; line-height:1.4;';
             container.appendChild(div); container.scrollTop = container.scrollHeight;
         }
 
@@ -468,7 +461,7 @@
         function showClientNotification(text) {
             const old = document.getElementById('client-notify'); if (old) old.remove();
             const notify = document.createElement('div'); notify.id = 'client-notify'; notify.innerHTML = `🔔 <b>${text}</b>`;
-            notify.style.cssText = `position: fixed; top: 80px; right: 30px; z-index: 10000; background: var(--accent); color: #fff; padding: 12px 24px; border-radius: 50px; font-weight: 700; box-shadow: 0 10px 30px rgba(0,0,0,0.2); animation: slideInRight 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); font-family: -apple-system, sans-serif;`;
+            notify.style.cssText = `position: fixed; top: 80px; right: 30px; z-index: 10000; background: var(--accent); color: #fff; padding: 10px 20px; border-radius: 50px; font-weight: 700; box-shadow: 0 10px 30px rgba(0,0,0,0.2); animation: slideInRight 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); font-family: -apple-system, sans-serif; font-size: 0.9rem;`;
             document.body.appendChild(notify);
             setTimeout(() => { notify.style.transition = 'all 0.3s'; notify.style.opacity = '0'; notify.style.transform = 'translateX(100%)'; setTimeout(() => notify.remove(), 300); }, 4000);
         }
@@ -497,7 +490,7 @@
                         } else {
                             if (lastMsg.sender === 'system') {
                                 const sysDiv = document.createElement('div'); sysDiv.innerHTML = lastMsg.message;
-                                sysDiv.style.cssText = 'align-self:center; background:rgba(255,107,0,0.1); border:1px solid var(--accent); color:var(--accent); padding:10px 16px; border-radius:20px; font-size:0.85rem; text-align:center; max-width:90%; animation:slideUp 0.3s; margin: 10px 0;';
+                                sysDiv.style.cssText = 'align-self:center; background:rgba(255,107,0,0.1); border:1px solid var(--accent); color:var(--accent); padding:8px 14px; border-radius:16px; font-size:0.8rem; text-align:center; max-width:90%; animation:slideUp 0.3s; margin: 8px 0;';
                                 document.getElementById('chat-messages').appendChild(sysDiv);
                             } else { appendMessage('manager', lastMsg.message); }
                         }
