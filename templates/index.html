@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-    <title>Li Auto Parts | Запчасти для Lixiang</title>
+    <title>Li Auto Parts | Официальный поставщик запчастей</title>
     <style>
         :root {
             --bg-main: #ffffff;
             --bg-card: #f5f5f7;
-            --accent: #FF6B00; /* Оранжевый Li Auto */
+            --accent: #FF6B00; /* Li Auto Orange */
             --text-main: #1d1d1f;
             --text-sec: #86868b;
             --border: #e5e5e5;
@@ -19,224 +19,342 @@
         * { box-sizing: border-box; -webkit-font-smoothing: antialiased; margin: 0; padding: 0; }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
             background: var(--bg-main); color: var(--text-main); line-height: 1.5; overflow-x: hidden; scroll-behavior: smooth;
         }
 
+        /* --- NAVIGATION --- */
         nav {
-            position: sticky; top: 0; z-index: 1000; background: rgba(255, 255, 255, 0.8); backdrop-filter: var(--blur);
+            position: sticky; top: 0; z-index: 1000; background: rgba(255, 255, 255, 0.85); backdrop-filter: var(--blur);
             border-bottom: 1px solid var(--border); padding: 0 40px; height: 70px; display: flex; align-items: center; justify-content: space-between;
         }
         .nav-logo { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.5px; text-decoration: none; color: var(--text-main); }
         .nav-logo span { color: var(--accent); }
         .nav-links { display: flex; gap: 30px; font-size: 0.9rem; color: #444; }
-        .nav-links a { text-decoration: none; color: inherit; transition: color 0.3s; opacity: 0.8; }
+        .nav-links a { text-decoration: none; color: inherit; transition: color 0.3s; opacity: 0.8; font-weight: 500; }
         .nav-links a:hover { opacity: 1; color: var(--accent); }
-        .nav-cart { background: var(--bg-card); padding: 8px 18px; border-radius: 20px; font-size: 0.9rem; text-decoration: none; color: var(--text-main); display: flex; align-items: center; gap: 8px; transition: background 0.3s; border: 1px solid var(--border); }
+        .nav-cart { background: var(--bg-card); padding: 8px 18px; border-radius: 20px; font-size: 0.9rem; text-decoration: none; color: var(--text-main); display: flex; align-items: center; gap: 8px; transition: background 0.3s; border: 1px solid var(--border); font-weight: 600; }
         
-        .hero {
-            position: relative; min-height: 80vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 40px 20px;
-            background: linear-gradient(135deg, #f5f5f7 0%, #ffffff 100%);
+        /* --- HERO SLIDER --- */
+        .slider-container {
+            position: relative; width: 100%; height: 600px; overflow: hidden; background: #000;
         }
-        .hero-content { position: relative; z-index: 2; max-width: 900px; width: 100%; }
-        h1 { font-size: clamp(2.5rem, 5vw, 5rem); font-weight: 800; letter-spacing: -2px; margin: 0 0 20px; line-height: 1.1; color: var(--text-main); }
-        .hero-sub { font-size: clamp(1rem, 2vw, 1.5rem); color: var(--text-sec); margin-bottom: 40px; font-weight: 400; max-width: 700px; margin-left: auto; margin-right: auto;}
-        
-        .search-wrapper {
-            width: 100%; max-width: 600px; margin: 0 auto; background: #fff; border-radius: 50px; padding: 6px; display: flex;
-            border: 1px solid var(--border); transition: all 0.3s; box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        .slider-track {
+            display: flex; height: 100%; transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
         }
-        .search-input { flex: 1; background: transparent; border: none; outline: none; color: var(--text-main); padding: 15px 25px; font-size: 1.1rem; }
-        .search-btn { background: var(--accent); color: #fff; border: none; border-radius: 50px; padding: 0 35px; font-weight: 700; cursor: pointer; transition: transform 0.2s; white-space: nowrap; }
-        .search-btn:hover { transform: scale(1.05); }
+        .slide {
+            min-width: 100%; height: 100%; position: relative; display: flex; align-items: center; justify-content: center;
+            background-size: cover; background-position: center;
+        }
+        .slide::before {
+            content: ''; position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.7));
+        }
+        .slide-content {
+            position: relative; z-index: 2; text-align: center; color: #fff; max-width: 800px; padding: 20px;
+            transform: translateY(20px); opacity: 0; transition: all 0.8s ease-out;
+        }
+        .slide.active .slide-content { transform: translateY(0); opacity: 1; }
+        .slide-tag {
+            display: inline-block; background: var(--accent); color: #fff; padding: 6px 16px; border-radius: 20px;
+            font-size: 0.8rem; font-weight: 700; text-transform: uppercase; margin-bottom: 20px; letter-spacing: 1px;
+        }
+        .slide h2 { font-size: clamp(2.5rem, 5vw, 4.5rem); font-weight: 800; margin-bottom: 20px; letter-spacing: -1px; line-height: 1.1; }
+        .slide p { font-size: 1.2rem; opacity: 0.9; margin-bottom: 30px; font-weight: 400; }
+        .slide-btn {
+            background: #fff; color: #000; padding: 14px 32px; border-radius: 30px; text-decoration: none;
+            font-weight: 700; display: inline-block; transition: transform 0.2s;
+        }
+        .slide-btn:hover { transform: scale(1.05); }
 
-        .section-container { max-width: var(--container-width); margin: 0 auto; padding: 80px 40px; }
-        .section-head { font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; margin-bottom: 50px; text-align: center; letter-spacing: -1px; }
+        /* Slider Controls */
+        .slider-dots {
+            position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; gap: 10px; z-index: 10;
+        }
+        .dot {
+            width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.4); cursor: pointer; transition: all 0.3s;
+        }
+        .dot.active { background: #fff; transform: scale(1.3); }
+        .slider-arrow {
+            position: absolute; top: 50%; transform: translateY(-50%); width: 50px; height: 50px;
+            background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10;
+            border: 1px solid rgba(255,255,255,0.3); transition: all 0.3s; color: #fff;
+        }
+        .slider-arrow:hover { background: rgba(255,255,255,0.4); }
+        .prev { left: 30px; } .next { right: 30px; }
+
+        /* --- SECTIONS --- */
+        .section-container { max-width: var(--container-width); margin: 0 auto; padding: 100px 40px; }
+        .section-head { font-size: clamp(2.5rem, 4vw, 3.5rem); font-weight: 800; margin-bottom: 60px; text-align: center; letter-spacing: -1px; }
         
+        /* Bento Grid with "Water" */
         .bento-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
         .bento-card {
-            background: var(--bg-card); border-radius: 30px; padding: 40px; position: relative;
-            overflow: hidden; border: 1px solid var(--border); display: flex; flex-direction: column; justify-content: space-between; min-height: 350px;
+            background: var(--bg-card); border-radius: 32px; padding: 45px; position: relative;
+            overflow: hidden; border: 1px solid transparent; display: flex; flex-direction: column; justify-content: space-between; min-height: 400px;
+            transition: transform 0.3s;
         }
-        .bento-card.large { grid-column: span 2; background: linear-gradient(135deg, #f5f5f7 0%, #ebebeb 100%); }
-        .bento-card.tall { grid-row: span 2; }
-        .card-label { font-size: 0.85rem; color: var(--text-sec); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; font-weight: 600; }
-        .card-title { font-size: clamp(1.5rem, 2.5vw, 2.2rem); font-weight: 800; margin: 0 0 15px; letter-spacing: -0.5px; }
-        .card-desc { color: var(--text-sec); font-size: 1.1rem; line-height: 1.6; margin: 0; }
-        .card-link { margin-top: 20px; color: var(--accent); text-decoration: none; font-weight: 700; display: inline-flex; align-items: center; gap: 5px; font-size: 1.1rem; }
+        .bento-card:hover { transform: translateY(-5px); }
+        .bento-card.large { grid-column: span 2; background: #fff; border: 1px solid var(--border); }
+        .bento-card.tall { grid-row: span 2; background: #1d1d1f; color: #fff; }
+        .bento-card.tall .card-label { color: #666; }
+        .bento-card.tall a { color: #fff; border-top-color: #333; }
+        .bento-card.tall a:hover { background: rgba(255,255,255,0.1); color: var(--accent); }
+        
+        .card-label { font-size: 0.8rem; color: var(--text-sec); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 15px; font-weight: 700; }
+        .card-title { font-size: clamp(1.8rem, 2.5vw, 2.5rem); font-weight: 800; margin: 0 0 20px; letter-spacing: -0.5px; line-height: 1.1; }
+        .card-desc { color: var(--text-sec); font-size: 1.1rem; line-height: 1.6; margin: 0; font-weight: 400; }
+        .bento-card.tall .card-desc { color: #888; }
 
-        .products-scroll { display: flex; gap: 20px; overflow-x: auto; padding: 20px 0 40px; scrollbar-width: none; scroll-snap-type: x mandatory; }
-        .products-scroll::-webkit-scrollbar { display: none; }
+        /* Categories List inside Tall Card */
+        .cat-list-item {
+            display: flex; align-items: center; padding: 20px 0; border-top: 1px solid rgba(255,255,255,0.1);
+            text-decoration: none; color: inherit; transition: all 0.3s; gap: 15px;
+        }
+        .cat-list-item:first-child { border-top: none; }
+        .cat-list-item:hover { padding-left: 10px; color: var(--accent); }
+        .cat-icon { font-size: 1.5rem; width: 40px; text-align: center; }
+        .cat-name { font-weight: 600; font-size: 1.1rem; flex: 1; }
+        .cat-arrow { opacity: 0.5; transition: transform 0.3s; }
+        .cat-list-item:hover .cat-arrow { transform: translateX(5px); opacity: 1; }
+
+        /* --- WHITE CATALOG SECTION --- */
+        .catalog-section { background: #fff; padding: 100px 0; }
+        .products-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px;
+            max-width: var(--container-width); margin: 0 auto; padding: 0 40px;
+        }
         .product-card {
-            min-width: 300px; width: 300px; background: #fff; border-radius: 24px;
-            overflow: hidden; border: 1px solid var(--border); flex-shrink: 0; scroll-snap-align: start;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.03); transition: transform 0.3s;
+            background: #fff; border-radius: 24px; overflow: hidden; border: 1px solid var(--border);
+            transition: all 0.3s; display: flex; flex-direction: column;
         }
-        .product-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
-        .p-img { height: 250px; background: #f9f9f9; overflow: hidden; display: flex; align-items: center; justify-content: center; }
-        .p-img img { width: 100%; height: 100%; object-fit: cover; }
-        .p-info { padding: 25px; }
-        .p-name { font-size: 1.2rem; font-weight: 700; margin: 0 0 10px; line-height: 1.3; }
-        .p-meta { color: var(--text-sec); font-size: 0.9rem; margin-bottom: 15px; }
-        .p-price { color: var(--accent); font-size: 1.4rem; font-weight: 800; }
-        .add-btn { background: var(--accent); color: #fff; border: none; border-radius: 8px; padding: 8px 16px; cursor: pointer; font-size: 0.9rem; font-weight: 600; transition: opacity 0.2s; }
-        .add-btn:hover { opacity: 0.9; }
+        .product-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0,0,0,0.08); border-color: transparent; }
+        .p-img-wrap { height: 280px; background: #f9f9f9; position: relative; overflow: hidden; }
+        .p-img-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
+        .product-card:hover .p-img-wrap img { transform: scale(1.05); }
+        .p-badge {
+            position: absolute; top: 15px; left: 15px; background: rgba(255,255,255,0.9); backdrop-filter: blur(5px);
+            padding: 4px 10px; border-radius: 8px; font-size: 0.7rem; font-weight: 700; color: var(--text-main);
+        }
+        .p-info { padding: 25px; flex: 1; display: flex; flex-direction: column; }
+        .p-models { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
+        .model-tag { background: rgba(255,107,0,0.08); color: var(--accent); padding: 4px 8px; border-radius: 6px; font-size: 0.7rem; font-weight: 700; }
+        .p-name { font-size: 1.1rem; font-weight: 700; margin-bottom: 8px; line-height: 1.3; color: var(--text-main); }
+        .p-oem { font-size: 0.8rem; color: var(--text-sec); margin-bottom: 15px; font-family: monospace; }
+        .p-bottom { margin-top: auto; display: flex; justify-content: space-between; align-items: center; }
+        .p-price { font-size: 1.3rem; font-weight: 800; color: var(--text-main); }
+        .add-btn {
+            background: var(--text-main); color: #fff; border: none; border-radius: 12px; padding: 10px 20px;
+            cursor: pointer; font-size: 0.9rem; font-weight: 600; transition: all 0.2s;
+        }
+        .add-btn:hover { background: var(--accent); transform: scale(1.05); }
 
-        footer { text-align: center; padding: 60px 20px; color: var(--text-sec); font-size: 0.9rem; border-top: 1px solid var(--border); margin-top: 40px; background: var(--bg-card); }
+        /* --- FOOTER --- */
+        footer { background: var(--bg-card); padding: 80px 40px; text-align: center; border-top: 1px solid var(--border); }
+        .footer-logo { font-size: 2rem; font-weight: 800; margin-bottom: 20px; color: var(--text-main); }
+        .footer-links { display: flex; justify-content: center; gap: 30px; margin-bottom: 40px; flex-wrap: wrap; }
+        .footer-links a { color: var(--text-sec); text-decoration: none; font-weight: 500; transition: color 0.3s; }
+        .footer-links a:hover { color: var(--accent); }
+        .copyright { color: var(--text-sec); font-size: 0.9rem; }
 
-        .reveal { opacity: 0; transform: translateY(30px); filter: blur(5px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
-        .reveal.active { opacity: 1; transform: translateY(0); filter: blur(0); }
+        /* --- ANIMATIONS --- */
+        .reveal { opacity: 0; transform: translateY(40px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+        .reveal.active { opacity: 1; transform: translateY(0); }
 
+        /* --- RESPONSIVE --- */
         @media (max-width: 1024px) {
-            :root { --container-width: 90%; }
             .bento-grid { grid-template-columns: repeat(2, 1fr); }
             .bento-card.large { grid-column: span 2; }
-            .bento-card.tall { grid-row: span 1; min-height: 300px; }
-            nav { padding: 0 20px; } .section-container { padding: 60px 20px; }
+            .bento-card.tall { grid-row: span 1; min-height: 350px; }
+            .slider-container { height: 500px; }
         }
         @media (max-width: 768px) {
-            :root { --container-width: 95%; }
-            nav { height: 60px; padding: 0 15px; } .nav-links { display: none; } .nav-cart span { display: none; }
-            .hero { min-height: 70vh; padding: 30px 15px; }
-            .bento-grid { grid-template-columns: 1fr; gap: 15px; }
-            .bento-card, .bento-card.large, .bento-card.tall { grid-column: span 1; grid-row: span 1; min-height: auto; padding: 30px 20px; border-radius: 20px; }
-            .section-head { text-align: left; margin-bottom: 30px; font-size: 2rem; }
-            .product-card { min-width: 260px; width: 260px; } .p-img { height: 200px; }
-        }
-        @media (max-width: 480px) {
-            h1 { font-size: 2.2rem; } .hero-sub { font-size: 1rem; } .card-title { font-size: 1.5rem; }
-            .search-input { font-size: 1rem; padding: 12px 20px; } .nav-logo { font-size: 1.2rem; }
+            nav { padding: 0 20px; height: 60px; } .nav-links { display: none; }
+            .section-container { padding: 60px 20px; }
+            .bento-grid { grid-template-columns: 1fr; }
+            .bento-card, .bento-card.large, .bento-card.tall { grid-column: span 1; grid-row: span 1; min-height: auto; padding: 30px; border-radius: 24px; }
+            .slider-container { height: 400px; }
+            .slide h2 { font-size: 2rem; }
+            .products-grid { grid-template-columns: 1fr; padding: 0 20px; }
+            .slider-arrow { display: none; } /* Hide arrows on mobile, use swipe */
         }
         @media (min-width: 1920px) {
-            :root { --container-width: 1600px; } body { font-size: 18px; }
-            h1 { font-size: 6rem; } .hero-sub { font-size: 2rem; } .card-title { font-size: 3rem; }
-            nav { height: 90px; padding: 0 60px; } .nav-logo { font-size: 2rem; } .nav-links { font-size: 1.2rem; gap: 50px; }
-            .bento-card { min-height: 500px; padding: 60px; border-radius: 40px; }
-            .product-card { min-width: 400px; width: 400px; border-radius: 30px; } .p-img { height: 350px; }
-            .section-container { padding: 120px 60px; }
+            :root { --container-width: 1600px; }
+            .slider-container { height: 800px; }
+            .slide h2 { font-size: 6rem; }
         }
     </style>
 </head>
 <body>
+
+    <!-- Navigation -->
     <nav>
         <a href="/" class="nav-logo">Li<span>Auto</span>Parts</a>
         <div class="nav-links">
-            <a href="/catalog">Каталог</a>
-            <a href="#about">О нас</a>
+            <a href="#features">Преимущества</a>
+            <a href="#catalog">Каталог</a>
             <a href="#contacts">Контакты</a>
         </div>
-        <a href="/cart" class="nav-cart">🛒 <span style="background:var(--accent); color:#fff; border-radius:10px; padding:2px 8px; font-size:0.8rem; font-weight:bold;">{{ session.get('cart', [])|length }}</span></a>
+        <a href="/cart" class="nav-cart">🛒 <span style="background:var(--accent); color:#fff; border-radius:10px; padding:2px 8px; font-size:0.8rem;">{{ session.get('cart', [])|length }}</span></a>
     </nav>
 
-    <div class="hero">
-        <div class="hero-content reveal">
-            <h1>Запчасти для Li Auto</h1>
-            <p class="hero-sub">Оригинальные детали для L7, L8, L9 и ONE. Быстрая доставка по РФ.</p>
-            <form action="/catalog" method="GET" class="search-wrapper">
-                <input type="text" name="q" class="search-input" placeholder="Поиск по OEM, VIN или названию..." value="{{ search_query or '' }}">
-                <button type="submit" class="search-btn">Найти</button>
-            </form>
+    <!-- Hero Slider -->
+    <div class="slider-container" id="hero-slider">
+        <div class="slider-track">
+            <!-- Slide 1 -->
+            <div class="slide active" style="background-image: url('https://images.unsplash.com/photo-1617788138017-80ad40651399?q=80&w=2070&auto=format&fit=crop');">
+                <div class="slide-content">
+                    <span class="slide-tag">Новое поступление</span>
+                    <h2>Оригинальное масло<br>для Li L7 / L8 / L9</h2>
+                    <p>Специализированная синтетика 0W-20 для гибридных силовых установок增程式. Защита двигателя на уровне заводских стандартов.</p>
+                    <a href="/catalog?cat=Расходники" class="slide-btn">Перейти в каталог</a>
+                </div>
+            </div>
+            <!-- Slide 2 -->
+            <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?q=80&w=1966&auto=format&fit=crop');">
+                <div class="slide-content">
+                    <span class="slide-tag">Хит продаж</span>
+                    <h2>Пневмостойки и рычаги<br>в наличии во Владивостоке</h2>
+                    <p>Устраните стуки в подвеске вашего Li ONE или L9. Прямая поставка с завода-производителя без посредников.</p>
+                    <a href="/catalog?cat=Подвеска" class="slide-btn">Смотреть запчасти</a>
+                </div>
+            </div>
+            <!-- Slide 3 -->
+            <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1552519507-da3b142c6e3d?q=80&w=2070&auto=format&fit=crop');">
+                <div class="slide-content">
+                    <span class="slide-tag">Технологии</span>
+                    <h2>Диагностика и подбор<br>по VIN-коду</h2>
+                    <p>Исключите ошибки совместимости. Наши инженеры проверяют каждую деталь по внутренней базе данных Li Auto.</p>
+                    <a href="#contacts" class="slide-btn">Связаться с экспертом</a>
+                </div>
+            </div>
         </div>
+        
+        <div class="slider-arrow prev" onclick="moveSlide(-1)">❮</div>
+        <div class="slider-arrow next" onclick="moveSlide(1)">❯</div>
+        <div class="slider-dots" id="slider-dots"></div>
     </div>
 
-    <div class="section-container" id="about">
-        <h2 class="section-head reveal">Почему мы?</h2>
+    <!-- Features Section ("Water") -->
+    <div class="section-container" id="features">
+        <h2 class="section-head reveal">Стандарты премиум-класса</h2>
         <div class="bento-grid">
             <div class="bento-card large reveal">
                 <div>
-                    <div class="card-label">Экспертиза</div>
-                    <h3 class="card-title">Специализация на Li Auto</h3>
-                    <p class="card-desc">Мы знаем все нюансы китайских премиум-электрокаров. Подбираем запчасти точно по VIN и OEM.</p>
+                    <div class="card-label">ЭКСПЕРТИЗА</div>
+                    <h3 class="card-title">Глубокая интеграция<br>в экосистему Li Auto</h3>
+                    <p class="card-desc">Мы не просто продаем запчасти — мы понимаем архитектуру ваших автомобилей. Наша команда регулярно проходит обучение по спецификациям моделей L-Series, что позволяет нам гарантировать 100% совместимость даже для сложных электронных компонентов и гибридных агрегатов.</p>
                 </div>
             </div>
+            
             <div class="bento-card reveal reveal-delay-1">
-                <div class="card-label">Логистика</div>
-                <h3 class="card-title">Доставка 3-7 дней</h3>
-                <p class="card-desc">Прямые поставки из Китая и наличие на складах в РФ.</p>
+                <div class="card-label">ЛОГИСТИКА</div>
+                <h3 class="card-title">Скорость<br>без компромиссов</h3>
+                <p class="card-desc">Собственные склады в ключевых хабах. Доставка от 3 дней благодаря оптимизированным цепочкам поставок из Китая.</p>
             </div>
-            <div class="bento-card tall reveal reveal-delay-2" style="padding: 0;">
-                <div style="padding: 40px 40px 20px;">
+
+            <div class="bento-card tall reveal reveal-delay-2">
+                <div style="padding-bottom: 20px;">
                     <div class="card-label">КАТЕГОРИИ</div>
-                    <h3 class="card-title" style="margin-bottom: 30px;">Ассортимент</h3>
+                    <h3 class="card-title" style="margin-bottom: 30px;">Полный спектр</h3>
                 </div>
+                
                 <div style="display: flex; flex-direction: column;">
-                    <a href="/catalog?cat=Подвеска" style="text-decoration: none; color: inherit; padding: 20px 40px; border-top: 1px solid var(--border); transition: all 0.3s; display: flex; align-items: center; gap: 15px;" onmouseover="this.style.background='rgba(255,107,0,0.05)'; this.style.color='#FF6B00'" onmouseout="this.style.background='transparent'; this.style.color='inherit'">
-                        <span style="font-size: 1.5rem;">🔧</span><span style="font-weight: 600; font-size: 1.1rem;">Подвеска</span><span style="margin-left: auto; opacity: 0.5;">→</span>
+                    <a href="/catalog?cat=Подвеска" class="cat-list-item">
+                        <span class="cat-icon">🔧</span>
+                        <span class="cat-name">Подвеска и ходовая</span>
+                        <span class="cat-arrow">→</span>
                     </a>
-                    <a href="/catalog?cat=Кузов" style="text-decoration: none; color: inherit; padding: 20px 40px; border-top: 1px solid var(--border); transition: all 0.3s; display: flex; align-items: center; gap: 15px;" onmouseover="this.style.background='rgba(255,107,0,0.05)'; this.style.color='#FF6B00'" onmouseout="this.style.background='transparent'; this.style.color='inherit'">
-                        <span style="font-size: 1.5rem;">🚗</span><span style="font-weight: 600; font-size: 1.1rem;">Кузовные детали</span><span style="margin-left: auto; opacity: 0.5;">→</span>
+                    <a href="/catalog?cat=Кузов" class="cat-list-item">
+                        <span class="cat-icon">🚗</span>
+                        <span class="cat-name">Кузовные элементы</span>
+                        <span class="cat-arrow">→</span>
                     </a>
-                    <a href="/catalog?cat=Электрика" style="text-decoration: none; color: inherit; padding: 20px 40px; border-top: 1px solid var(--border); transition: all 0.3s; display: flex; align-items: center; gap: 15px;" onmouseover="this.style.background='rgba(255,107,0,0.05)'; this.style.color='#FF6B00'" onmouseout="this.style.background='transparent'; this.style.color='inherit'">
-                        <span style="font-size: 1.5rem;">⚡</span><span style="font-weight: 600; font-size: 1.1rem;">Электрика</span><span style="margin-left: auto; opacity: 0.5;">→</span>
+                    <a href="/catalog?cat=Электрика" class="cat-list-item">
+                        <span class="cat-icon">⚡</span>
+                        <span class="cat-name">Электроника и датчики</span>
+                        <span class="cat-arrow">→</span>
+                    </a>
+                    <a href="/catalog?cat=Расходники" class="cat-list-item">
+                        <span class="cat-icon">💧</span>
+                        <span class="cat-name">Масла и фильтры</span>
+                        <span class="cat-arrow">→</span>
                     </a>
                 </div>
             </div>
+
             <div class="bento-card reveal reveal-delay-3">
-                <div class="card-label">Гарантия</div>
-                <h3 class="card-title">Проверка качества</h3>
-                <p class="card-desc">Каждая деталь проходит контроль перед отправкой.</p>
+                <div class="card-label">ГАРАНТИЯ</div>
+                <h3 class="card-title">Прозрачность<br>и надежность</h3>
+                <p class="card-desc">Каждая деталь проходит трехэтапный контроль качества. Мы предоставляем расширенную гарантию и поддержку при установке.</p>
             </div>
         </div>
     </div>
 
-    <div class="section-container" style="padding-top: 0;">
-        <h2 class="section-head reveal" style="text-align:left; margin-bottom:30px;">Новые поступления</h2>
-        <div class="products-scroll">
+    <!-- White Catalog Section -->
+    <div class="catalog-section" id="catalog">
+        <h2 class="section-head reveal" style="text-align:left; padding: 0 40px; margin-bottom:50px;">Актуальные предложения</h2>
+        <div class="products-grid">
             {% for p in popular_products %}
-            <a href="/product/{{ p.id }}" style="text-decoration:none; color:inherit;">
-                <div class="product-card reveal reveal-delay-{{ loop.index % 4 }}">
-                    <div class="p-img">
-                        {% if p.images %}
-                            {% set first_img = p.images.split(',')[0].strip() %}
-                            <img src="{{ first_img }}" loading="lazy" alt="{{ p.name }}">
-                        {% else %}
-                            <div style="color:#ccc;">No Photo</div>
+            <div class="product-card reveal reveal-delay-{{ loop.index % 4 }}">
+                <div class="p-img-wrap">
+                    {% if p.images %}
+                        {% set first_img = p.images.split(',')[0].strip() %}
+                        <img src="{{ first_img }}" loading="lazy" alt="{{ p.name }}">
+                    {% else %}
+                        <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:#ccc;">No Photo</div>
+                    {% endif %}
+                    <div class="p-badge">{{ p.condition }}</div>
+                </div>
+                <div class="p-info">
+                    <div class="p-models">
+                        {% if p.model_compatibility %}
+                            {% for m in p.model_compatibility.split(',')[:3] %}
+                                <span class="model-tag">{{ m.strip() }}</span>
+                            {% endfor %}
                         {% endif %}
                     </div>
-                    <div class="p-info">
-                        <div style="display:flex; gap:5px; margin-bottom:8px; flex-wrap:wrap;">
-                            {% if p.model_compatibility %}
-                                {% for m in p.model_compatibility.split(',')[:2] %}
-                                    <span style="background:rgba(255,107,0,0.1); color:var(--accent); padding:2px 8px; border-radius:4px; font-size:0.7rem; font-weight:600;">{{ m.strip() }}</span>
-                                {% endfor %}
-                            {% endif %}
-                        </div>
-                        <div class="p-name">{{ p.name }}</div>
-                        {% if p.oem_number %}<div style="font-size:0.8rem; color:var(--text-sec); margin-bottom:5px;">OEM: {{ p.oem_number }}</div>{% endif %}
-                        <div class="p-meta">Состояние: {{ p.condition }}</div>
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
-                            <div class="p-price">{% if p.price > 0 %}{{ "{:,}".format(p.price).replace(',', ' ') }} ₽{% else %}По запросу{% endif %}</div>
-                            <button onclick="addToCart({{ p.id }})" class="add-btn">В корзину</button>
-                        </div>
+                    <div class="p-name">{{ p.name }}</div>
+                    {% if p.oem_number %}<div class="p-oem">OEM: {{ p.oem_number }}</div>{% endif %}
+                    <div class="p-bottom">
+                        <div class="p-price">{% if p.price > 0 %}{{ "{:,}".format(p.price).replace(',', ' ') }} ₽{% else %}По запросу{% endif %}</div>
+                        <button onclick="addToCart({{ p.id }})" class="add-btn">В корзину</button>
                     </div>
                 </div>
-            </a>
+            </div>
             {% endfor %}
         </div>
     </div>
 
-    <footer class="reveal">
-        Copyright © 2026 Li Auto Parts. Все права защищены.<br>
-        Политика конфиденциальности | Условия использования
+    <!-- Footer -->
+    <footer id="contacts">
+        <div class="footer-logo">Li<span>Auto</span>Parts</div>
+        <div class="footer-links">
+            <a href="#">Политика конфиденциальности</a>
+            <a href="#">Условия гарантии</a>
+            <a href="#">Доставка и оплата</a>
+            <a href="#">Для партнеров</a>
+        </div>
+        <div class="copyright">© 2026 Li Auto Parts. All rights reserved.<br>Не является официальным представительством Li Auto Inc.</div>
     </footer>
 
-    <!-- CHAT WIDGET (Сохранен функционал) -->
+    <!-- Chat Widget (Preserved functionality) -->
     <div id="chat-widget" style="position: fixed; bottom: 30px; right: 30px; z-index: 9999; font-family: -apple-system, BlinkMacSystemFont, sans-serif;">
-        <button onclick="toggleChat()" style="width: 64px; height: 64px; border-radius: 50%; background: var(--accent); border: none; cursor: pointer; box-shadow: 0 10px 30px rgba(255, 107, 0, 0.3); display: flex; align-items: center; justify-content: center; transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+        <button onclick="toggleChat()" style="width: 64px; height: 64px; border-radius: 50%; background: var(--accent); border: none; cursor: pointer; box-shadow: 0 10px 30px rgba(255, 107, 0, 0.3); display: flex; align-items: center; justify-content: center; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
         </button>
         <div id="chat-window" style="display: none; position: absolute; bottom: 80px; right: 0; width: 340px; height: 480px; background: #fff; backdrop-filter: blur(20px); border-radius: 24px; border: 1px solid var(--border); box-shadow: 0 20px 50px rgba(0,0,0,0.1); overflow: hidden; flex-direction: column; animation: slideUp 0.3s ease-out;">
             <div style="padding: 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; background: var(--bg-card);">
                 <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: #fff;">👨‍💼</div>
-                <div><div style="font-weight: 700; color: var(--text-main); font-size: 0.95rem;">Менеджер Li Auto</div><div style="color: #4ade80; font-size: 0.75rem; display: flex; align-items: center; gap: 4px;"><span style="width:6px; height:6px; background:#4ade80; border-radius:50%;"></span> Онлайн</div></div>
-                <button onclick="toggleChat()" style="margin-left: auto; background: transparent; border: none; color: var(--text-sec); cursor: pointer; font-size: 1.5rem; line-height: 1;">×</button>
+                <div><div style="font-weight: 700; color: var(--text-main); font-size: 0.95rem;">Эксперт Li Auto</div><div style="color: #4ade80; font-size: 0.75rem; display: flex; align-items: center; gap: 4px;"><span style="width:6px; height:6px; background:#4ade80; border-radius:50%;"></span> Онлайн</div></div>
+                <button onclick="toggleChat()" style="margin-left: auto; background: transparent; border: none; color: var(--text-sec); cursor: pointer; font-size: 1.5rem;">×</button>
             </div>
             <div id="chat-messages" style="flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; background: #fff;">
-                <div style="align-self: flex-start; background: var(--bg-card); padding: 12px 16px; border-radius: 18px 18px 18px 4px; max-width: 85%; font-size: 0.9rem; color: var(--text-main); line-height: 1.4;">Здравствуйте! 👋<br>Я менеджер Li Auto Parts. Чем могу помочь?</div>
+                <div style="align-self: flex-start; background: var(--bg-card); padding: 12px 16px; border-radius: 18px 18px 18px 4px; max-width: 85%; font-size: 0.9rem; color: var(--text-main); line-height: 1.4;">Здравствуйте! 👋<br>Я помогу подобрать запчасти для вашего Li Auto.</div>
             </div>
             <div style="padding: 16px; border-top: 1px solid var(--border); display: flex; gap: 10px; background: var(--bg-card);">
                 <input type="text" id="chat-input" placeholder="Напишите сообщение..." style="flex: 1; background: #fff; border: 1px solid var(--border); border-radius: 20px; padding: 10px 16px; color: var(--text-main); outline: none; font-size: 0.9rem;" onkeypress="if(event.key==='Enter') sendMessage()">
-                <button onclick="sendMessage()" style="background: var(--accent); border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                <button onclick="sendMessage()" style="background: var(--accent); border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; display: flex; align-items: center; justify-content: center;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
                 </button>
             </div>
@@ -254,6 +372,57 @@
     </style>
 
     <script>
+        // --- SLIDER LOGIC ---
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const track = document.querySelector('.slider-track');
+        const dotsContainer = document.getElementById('slider-dots');
+        let slideInterval;
+
+        // Create dots
+        slides.forEach((_, i) => {
+            const dot = document.createElement('div');
+            dot.className = 'dot' + (i === 0 ? ' active' : '');
+            dot.onclick = () => goToSlide(i);
+            dotsContainer.appendChild(dot);
+        });
+
+        function updateSlider() {
+            track.style.transform = `translateX(-${currentSlide * 100}%)`;
+            slides.forEach(s => s.classList.remove('active'));
+            slides[currentSlide].classList.add('active');
+            document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === currentSlide));
+        }
+
+        function moveSlide(dir) {
+            currentSlide = (currentSlide + dir + slides.length) % slides.length;
+            updateSlider();
+            resetInterval();
+        }
+
+        function goToSlide(index) {
+            currentSlide = index;
+            updateSlider();
+            resetInterval();
+        }
+
+        function resetInterval() {
+            clearInterval(slideInterval);
+            slideInterval = setInterval(() => moveSlide(1), 5000);
+        }
+
+        // Touch support for mobile
+        let touchStartX = 0;
+        const slider = document.getElementById('hero-slider');
+        slider.addEventListener('touchstart', e => touchStartX = e.touches[0].clientX);
+        slider.addEventListener('touchend', e => {
+            const diff = touchStartX - e.changedTouches[0].clientX;
+            if (Math.abs(diff) > 50) moveSlide(diff > 0 ? 1 : -1);
+        });
+
+        resetInterval();
+
+        // --- CHAT & OTHER LOGIC (Preserved) ---
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault(); const targetId = this.getAttribute('href'); if (targetId === '#') return;
